@@ -1,7 +1,7 @@
 #include <QGuiApplication>
 #include <QQmlApplicationEngine>
 #include <QQmlContext>
-#include "mastercontroller.h"
+#include "controllers/mastercontroller.h"
 
 int main(int argc, char *argv[])
 {
@@ -10,7 +10,6 @@ int main(int argc, char *argv[])
     QGuiApplication app(argc, argv);
 
     np::controllers::MasterController masterController;
-
     QQmlApplicationEngine engine;
     engine.addImportPath("qrc:/");
     engine.rootContext()->setContextProperty("masterController", &masterController);

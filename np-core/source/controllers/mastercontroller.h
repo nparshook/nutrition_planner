@@ -4,7 +4,7 @@
 #include <QObject>
 #include <QScopedPointer>
 #include <QString>
-
+#include "fooddatabasecontroller.h"
 namespace np {
 namespace controllers {
 
@@ -16,9 +16,7 @@ class MasterController : public QObject
 public:
     explicit MasterController(QObject* parent = nullptr);
     ~MasterController();
-    //NavigationController* navigationController();
     const QString& welcomeMessage() const;
-    //CommandController* commandController();
 private:
     class Implementation;
     QScopedPointer<Implementation> implementation;

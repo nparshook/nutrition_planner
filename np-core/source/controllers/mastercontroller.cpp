@@ -1,4 +1,5 @@
 #include "mastercontroller.h"
+#include <QDebug>
 
 namespace np {
 namespace controllers {
@@ -9,10 +10,13 @@ public:
     Implementation(MasterController* _masterController)
         : masterController(_masterController)
     {
+        foodDBController = new FoodDatabaseController(masterController);
+        qDebug() << foodDBController->isReady();
     }
 
     MasterController* masterController{nullptr};
-    QString welcomeMessage = "This is MasterController to Major Tom";
+    FoodDatabaseController* foodDBController{nullptr};
+    QString welcomeMessage = "Welcome";
 };
 
 MasterController::MasterController(QObject* parent)

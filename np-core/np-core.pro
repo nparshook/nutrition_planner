@@ -12,7 +12,7 @@ MOC_DIR = $$PWD/build/$$DESTINATION_PATH/.moc
 RCC_DIR = $$PWD/build/$$DESTINATION_PATH/.qrc
 UI_DIR = $$PWD/build/$$DESTINATION_PATH/.ui
 
-QT       += sql
+QT       += sql qml
 QT       -= gui
 
 TARGET = np-core
@@ -31,10 +31,21 @@ DEFINES += QT_DEPRECATED_WARNINGS
 #DEFINES += QT_DISABLE_DEPRECATED_BEFORE=0x060000    # disables all the APIs deprecated before Qt 6.0.0
 
 SOURCES += \
-        source\mastercontroller.cpp
+        source/controllers/mastercontroller.cpp \
+    source/controllers/fooddatabasecontroller.cpp \
+    source/data/foodgrp.cpp \
+    source/data/foodwgt.cpp \
+    source/data/foodnutr.cpp \
+    source/data/foodid.cpp
 
 HEADERS += \
-        source\mastercontroller.h
+        source/controllers/mastercontroller.h \
+    source/controllers/fooddatabasecontroller.h \
+    source/data/foodgrp.h \
+    source/data/foodwgt.h \
+    source/data/foodnutr.h \
+    source/data/foodid.h
+
 unix {
     target.path = /usr/lib
     INSTALLS += target

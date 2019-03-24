@@ -7,7 +7,7 @@ MOC_DIR = $$PWD/build/$$DESTINATION_PATH/.moc
 RCC_DIR = $$PWD/build/$$DESTINATION_PATH/.qrc
 UI_DIR = $$PWD/build/$$DESTINATION_PATH/.ui
 
-QT += qml quick
+QT += qml quick sql
 CONFIG += c++14
 TEMPLATE = app
 
@@ -28,10 +28,10 @@ INCLUDEPATH += source \
 LIBS += -L$$PWD/../binaries/$$DESTINATION_PATH -lnp-core
 
 SOURCES += \
-        source\main.cpp
+        source/main.cpp
 
 RESOURCES += \
-    views.qrc
+    views.qrc \
 
 # Additional import path used to resolve QML modules in Qt Creator's code model
 QML_IMPORT_PATH += $$PWD
