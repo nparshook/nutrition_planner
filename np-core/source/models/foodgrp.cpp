@@ -1,7 +1,7 @@
-#include "foodwgt.h"
+#include "foodgrp.h"
 
 namespace np {
-namespace controllers {
+namespace models {
 
 class FoodGrp::Implementation
 {

@@ -17,7 +17,9 @@ QT       -= gui
 
 TARGET = np-core
 TEMPLATE = lib
-CONFIG += c++14 staticlib
+CONFIG += c++14
+
+DEFINES += NPCORE_LIBRARY
 
 # The following define makes your compiler emit warnings if you use
 # any feature of Qt which has been marked as deprecated (the exact warnings
@@ -32,21 +34,27 @@ DEFINES += QT_DEPRECATED_WARNINGS
 
 SOURCES += \
         source/controllers/mastercontroller.cpp \
-    source/controllers/fooddatabasecontroller.cpp \
-    source/data/foodgrp.cpp \
-    source/data/foodwgt.cpp \
-    source/data/foodnutr.cpp \
-    source/data/foodid.cpp
+    source/models/foodgrp.cpp \
+    source/models/foodwgt.cpp \
+    source/models/foodnutr.cpp \
+    source/models/foodid.cpp \
+    source/models/foodsearch.cpp \
+    source/controllers/databasecontroller.cpp
 
 HEADERS += \
         source/controllers/mastercontroller.h \
-    source/controllers/fooddatabasecontroller.h \
-    source/data/foodgrp.h \
-    source/data/foodwgt.h \
-    source/data/foodnutr.h \
-    source/data/foodid.h
+    source/models/foodgrp.h \
+    source/models/foodwgt.h \
+    source/models/foodnutr.h \
+    source/models/foodid.h \
+    source/np-core_global.h \
+    source/models/foodsearch.h \
+    source/controllers/databasecontroller.h
 
 unix {
     target.path = /usr/lib
     INSTALLS += target
 }
+
+message(np-core project dir: $${PWD})
+message(np-core output dir: $${DESTDIR})

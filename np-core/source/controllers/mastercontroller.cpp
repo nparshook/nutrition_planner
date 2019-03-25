@@ -1,6 +1,8 @@
 #include "mastercontroller.h"
 #include <QDebug>
 
+using namespace np::models;
+
 namespace np {
 namespace controllers {
 
@@ -10,12 +12,14 @@ public:
     Implementation(MasterController* _masterController)
         : masterController(_masterController)
     {
-        foodDBController = new FoodDatabaseController(masterController);
-        qDebug() << foodDBController->isReady();
+        usdaDBController = new DatabaseController(masterController);
+        qDebug() << usdaDBController->isReady();
+        foodSearch = new FoodSearch(masterController, usdaDBController);
     }
 
     MasterController* masterController{nullptr};
-    FoodDatabaseController* foodDBController{nullptr};
+    DatabaseController* usdaDBController{nullptr};
+    FoodSearch* foodSearch{nullptr};
     QString welcomeMessage = "Welcome";
 };
 
@@ -32,5 +36,10 @@ MasterController::~MasterController()
 const QString& MasterController::welcomeMessage() const
 {
     return implementation->welcomeMessage;
+}
+
+FoodSearch *MasterController::foodSearch()
+{
+    return implementation->foodSearch;
 }
 }}
