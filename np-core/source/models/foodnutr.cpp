@@ -27,6 +27,11 @@ FoodNutr::FoodNutr(int nutrNo, float nutrVal, const QString &nutrDesc, const QSt
 
 FoodNutr::~FoodNutr(){}
 
+void FoodNutr::setNutrVal(float nutrVal)
+{
+    implementation->nutrVal = nutrVal;
+}
+
 int FoodNutr::nutrNo() const
 {
     return implementation->nutrNo;

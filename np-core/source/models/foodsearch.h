@@ -6,6 +6,8 @@
 #include "../np-core_global.h"
 #include "../controllers/databasecontroller.h"
 #include "foodgrp.h"
+#include "foodid.h"
+#include "fooditem.h"
 
 namespace np {
 namespace models {
@@ -20,7 +22,7 @@ public:
     ~FoodSearch();
     QQmlListProperty<FoodGrp> foodGrps();
     Q_INVOKABLE QVariant searchFoods(int foodGrpIdx, const QString &searchText);
-    //Q_INVOKABLE FoodItem *getFood(FoodID *);
+    Q_INVOKABLE FoodItem *getFood(FoodID *);
 
 private:
     class Implementation;

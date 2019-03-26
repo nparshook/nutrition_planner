@@ -1,6 +1,6 @@
-<!DOCTYPE RCC>
-<RCC version="1.0">
+<RCC>
     <qresource prefix="/views">
         <file alias="main.qml">views/main.qml</file>
+        <file alias="NutritionPlanner.qml">views/NutritionPlanner.qml</file>
     </qresource>
 </RCC>

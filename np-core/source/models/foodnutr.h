@@ -18,6 +18,7 @@ class NPCORESHARED_EXPORT FoodNutr : public QObject
 public:
     explicit FoodNutr(int nutrNo, float nutrVal, const QString &nutrDesc, const QString &tagName, const QString &units, QObject *parent=nullptr);
     ~FoodNutr();
+    void setNutrVal(float nutrVal);
     int nutrNo() const;
     float nutrVal() const;
     QString nutrDesc() const;

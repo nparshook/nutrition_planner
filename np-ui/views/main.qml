@@ -1,88 +1,96 @@
 import QtQuick 2.12
-import QtQuick.Window 2.12
-import QtQuick.Controls 2.12
 import QtQuick.Layouts 1.12
+import QtQuick.Controls 2.12
+import QtQuick.Controls.Material 2.12
+import QtQuick.Controls.Universal 2.12
+import Qt.labs.settings 1.0
 
 import NP 1.0
+import components 1.0
 
-Window {
+ApplicationWindow {
+    id: window
+    minimumWidth: 1280
+    minimumHeight: 960
     visible: true
-    width: 640
-    height: 480
-    title: qsTr("Hello World")
-    Text {
-        text: masterController.ui_welcomeMessage
-    }
-    ColumnLayout {
-        id: foodCol
-        property FoodSearch ui_foodSearch: masterController.ui_foodSearch
-        //property FoodDB database
-        //signal foodItemSelected(FoodItem item)
+    visibility: "Maximized"
+    x: 0
+    y: 0
+    title: "Nutrition Planner"
 
-        function clear()
-        {
-            foodSearch.text = ''
-            foodGroupsComboBox.currentIndex = 0
-        }
+    /*Settings {
+        id: settings
+        property string style: "Default"
+    }*/
 
-        TextField {
-            id: foodSearch
-            Layout.fillWidth: true
-            Layout.alignment: Qt.AlignTop
-            focus: true
-            z: 1
-            selectByMouse: true
-            onTextChanged: {
-                resultsList.model = foodCol.ui_foodSearch.searchFoods(foodGroupsComboBox.currentIndex, foodSearch.text)
-            }
-        }
-
-        ComboBox {
-            id: foodGroupsComboBox
-            editable: true
-            textRole: "ui_desc"
-            model: foodCol.ui_foodSearch.ui_foodGrps
-            Layout.fillWidth: true
-            Layout.alignment: Qt.AlignTop
-            onCurrentIndexChanged: {
-                resultsList.model = foodCol.ui_foodSearch.searchFoods(foodGroupsComboBox.currentIndex, foodSearch.text)
-            }
-            Component.onCompleted: {
-                contentItem.selectByMouse = true
-            }
-            z: 1
-        }
-
-        ListView {
-            id: resultsList
-            Layout.fillWidth: true
-            Layout.fillHeight: true
-            Layout.alignment: Qt.AlignTop
-            currentIndex: -1
-            model: []
-            z: 0
-            delegate: ItemDelegate {
-                width: parent.width
-                text: modelData.shrtDesc
-                contentItem: Label {
-                    wrapMode: Text.WordWrap
-                    text: parent.text
-                }
-
-                highlighted: { if(ListView.isCurrentItem) true; else false}
-                onClicked: {
-                    resultsList.currentItem.highlighted = false
-                    resultsList.currentIndex = index
-                }
-                onHoveredChanged: {
-                    if (!ListView.isCurrentItem)
-                        highlighted = !highlighted
-                }
-            }
-
-            //onCurrentItemChanged: foodCol.foodItemSelected(database.getFood(resultsList.model[resultsList.currentIndex]))
-
-            ScrollIndicator.vertical: ScrollIndicator { }
+    Shortcut {
+        sequences: ["Esc", "Back"]
+        enabled: stackView.depth > 1
+        onActivated: {
+            stackView.pop()
+            listView.currentIndex = -1
         }
     }
+
+    Shortcut {
+        sequence: "Menu"
+        onActivated: optionsMenu.open()
+    }
+
+    /*menuBar: MenuBar {
+        Menu {
+            title: "File"
+            MenuItem {
+                text: "Quit"
+                onTriggered: Qt.quit()
+            }
+        }
+
+        Menu {
+            title: "Help"
+            MenuItem {
+                text: "About"
+                onTriggered: aboutDialog.open()
+            }
+        }
+    }*/
+
+    StackView {
+        id: stackView
+        anchors.fill: parent
+
+        initialItem: "qrc:/views/NutritionPlanner.qml"
+    }
+
+    /*Dialog {
+        id: aboutDialog
+        modal: true
+        focus: true
+        title: "About"
+        x: (window.width - width) / 2
+        y: window.height / 6
+        width: Math.min(window.width, window.height) / 3 * 2
+        contentHeight: aboutColumn.height
+
+        Column {
+            id: aboutColumn
+            spacing: 20
+
+            Label {
+                width: aboutDialog.availableWidth
+                text: "The Qt Quick Controls 2 module delivers the next generation user interface controls based on Qt Quick."
+                wrapMode: Label.Wrap
+                font.pixelSize: 12
+            }
+
+            Label {
+                width: aboutDialog.availableWidth
+                text: "In comparison to the desktop-oriented Qt Quick Controls 1, Qt Quick Controls 2 "
+                    + "are an order of magnitude simpler, lighter and faster, and are primarily targeted "
+                    + "towards embedded and mobile platforms."
+                wrapMode: Label.Wrap
+                font.pixelSize: 12
+            }
+        }
+    }*/
 }

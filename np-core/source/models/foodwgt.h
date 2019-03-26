@@ -2,6 +2,7 @@
 #define FOODWGT_H
 
 #include <QObject>
+#include <QScopedPointer>
 #include "../np-core_global.h"
 
 namespace np {

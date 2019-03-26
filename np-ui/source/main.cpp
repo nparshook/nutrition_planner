@@ -4,6 +4,8 @@
 #include <controllers/mastercontroller.h>
 #include <models/foodgrp.h>
 #include <models/foodsearch.h>
+#include <models/fooditem.h>
+#include <models/fooditemlist.h>
 
 int main(int argc, char *argv[])
 {
@@ -11,10 +13,14 @@ int main(int argc, char *argv[])
 
     QGuiApplication app(argc, argv);
     qmlRegisterType<np::controllers::MasterController>("NP", 1, 0, "MasterController");
+
     qmlRegisterType<np::models::FoodGrp>("NP", 1, 0, "FoodGrp");
+    qmlRegisterType<np::models::FoodItem>("NP", 1, 0, "FoodItem");
+    qmlRegisterType<np::models::FoodItemList>("NP", 1, 0, "FoodItemList");
     qmlRegisterType<np::models::FoodSearch>("NP", 1, 0, "FoodSearch");
 
     np::controllers::MasterController masterController;
+
     QQmlApplicationEngine engine;
     engine.addImportPath("qrc:/");
     engine.rootContext()->setContextProperty("masterController", &masterController);

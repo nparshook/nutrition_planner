@@ -39,7 +39,9 @@ SOURCES += \
     source/models/foodnutr.cpp \
     source/models/foodid.cpp \
     source/models/foodsearch.cpp \
-    source/controllers/databasecontroller.cpp
+    source/controllers/databasecontroller.cpp \
+    source/models/fooditem.cpp \
+    source/models/fooditemlist.cpp
 
 HEADERS += \
         source/controllers/mastercontroller.h \
@@ -49,7 +51,9 @@ HEADERS += \
     source/models/foodid.h \
     source/np-core_global.h \
     source/models/foodsearch.h \
-    source/controllers/databasecontroller.h
+    source/controllers/databasecontroller.h \
+    source/models/fooditem.h \
+    source/models/fooditemlist.h
 
 unix {
     target.path = /usr/lib

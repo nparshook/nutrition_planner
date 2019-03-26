@@ -5,8 +5,6 @@
 #include <QList>
 #include <QVariant>
 #include "../controllers/databasecontroller.h"
-#include "foodgrp.h"
-#include "foodid.h"
 
 using namespace np::controllers;
 
@@ -39,9 +37,9 @@ public:
         }
     }
 
-    QList<FoodID *>  searchFoods(int foodGrpIdx, const QString &text)
+    QList<QObject *>  searchFoods(int foodGrpIdx, const QString &text)
     {
-        QList<FoodID *> searchResults;
+        QList<QObject *> searchResults;
         if (text == "") {
             return searchResults;
         }
@@ -61,10 +59,39 @@ public:
         searchQuery->exec();
         while (searchQuery->next())
         {
-            searchResults.append(new FoodID(searchQuery->value("ndb_no").toString(), searchQuery->value("shrt_desc").toString(), searchQuery->value("long_desc").toString()));
+            searchResults.append(new FoodID(searchQuery->value("ndb_no").toString(),
+                                            searchQuery->value("shrt_desc").toString(),
+                                            searchQuery->value("long_desc").toString()));
+        }
+        qDebug() << searchResults.size();
+        return searchResults;
+    }
+
+    FoodItem* getFood(FoodID *foodID)
+    {
+        FoodItem *foodItem = new FoodItem();
+        foodItem->setFoodID(foodID);
+        foodWeightQuery->bindValue(":n", foodID->ndbNo());
+        foodWeightQuery->exec();
+        while (foodWeightQuery->next())
+        {
+            foodItem->appendWeight(new FoodWgt(foodWeightQuery->value("seq").toInt(),
+                                               foodWeightQuery->value("amount").toFloat(),
+                                               foodWeightQuery->value("msre_desc").toString(),
+                                               foodWeightQuery->value("gm_wgt").toFloat()));
         }
 
-        return searchResults;
+        foodNutrientsQuery->bindValue(":n", foodID->ndbNo());
+        foodNutrientsQuery->exec();
+        while (foodNutrientsQuery->next())
+        {
+            foodItem->appendNutrient(new FoodNutr(foodNutrientsQuery->value("nutr_no").toInt(),
+                                                  foodNutrientsQuery->value("nutr_val").toFloat(),
+                                                  foodNutrientsQuery->value("nutrdesc").toString(),
+                                                  foodNutrientsQuery->value("tagname").toString(),
+                                                  foodNutrientsQuery->value("units").toString()));
+        }
+        return foodItem;
     }
 
     FoodSearch* foodSearch{nullptr};
@@ -92,7 +119,13 @@ QQmlListProperty<FoodGrp> FoodSearch::foodGrps() {
 }
 
 QVariant FoodSearch::searchFoods(int foodGrpIdx, const QString &searchText) {
+    qDebug() << "Searching for food with: " << searchText;
     return QVariant::fromValue(implementation->searchFoods(foodGrpIdx, searchText));
+}
+
+FoodItem* FoodSearch::getFood(FoodID *foodID)
+{
+    return implementation->getFood(foodID);
 }
 }
 }
