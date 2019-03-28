@@ -7,7 +7,7 @@ MOC_DIR = $$PWD/build/$$DESTINATION_PATH/.moc
 RCC_DIR = $$PWD/build/$$DESTINATION_PATH/.qrc
 UI_DIR = $$PWD/build/$$DESTINATION_PATH/.ui
 
-QT += qml quick sql
+QT += qml quick sql widgets charts
 CONFIG += c++14
 TEMPLATE = app
 

@@ -1,4 +1,4 @@
-#include <QGuiApplication>
+#include <QApplication>
 #include <QQmlApplicationEngine>
 #include <QQmlContext>
 #include <controllers/mastercontroller.h>
@@ -11,7 +11,8 @@ int main(int argc, char *argv[])
 {
     QCoreApplication::setAttribute(Qt::AA_EnableHighDpiScaling);
 
-    QGuiApplication app(argc, argv);
+    QApplication app(argc, argv);
+
     qmlRegisterType<np::controllers::MasterController>("NP", 1, 0, "MasterController");
 
     qmlRegisterType<np::models::FoodGrp>("NP", 1, 0, "FoodGrp");

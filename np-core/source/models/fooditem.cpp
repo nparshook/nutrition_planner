@@ -1,5 +1,6 @@
 #include "fooditem.h"
 #include <QList>
+#include <QDebug>
 
 namespace np {
 namespace models {

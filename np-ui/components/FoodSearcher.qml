@@ -66,6 +66,7 @@ Item {
                 onClicked: {
                     resultsList.currentItem.highlighted = false
                     resultsList.currentIndex = index
+                    resultsList.currentItem.highlighted = true
                 }
                 onHoveredChanged: {
                     if (!ListView.isCurrentItem)
@@ -73,7 +74,7 @@ Item {
                 }
             }
 
-            //onCurrentItemChanged: foodItemSelected(ui_foodSearch.getFood(resultsList.model[resultsList.currentIndex]))
+            onCurrentItemChanged: foodItemSelected(ui_foodSearch.getFood(resultsList.model[resultsList.currentIndex]))
 
             ScrollIndicator.vertical: ScrollIndicator { }
         }

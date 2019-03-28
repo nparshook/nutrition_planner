@@ -22,6 +22,9 @@ public:
     QString shrtDesc() const;
     QString longDesc() const;
 
+    void setShrtDesc(const QString &shrtDesc);
+    void setLongDesc(const QString &longDesc);
+
 private:
     class Implementation;
     QScopedPointer<Implementation> implementation;

@@ -11,15 +11,19 @@ public:
         : foodItemList(_foodItemList)
     {
         name = "New FoodItem List...";
+        foodID = new FoodID("0", name, name, foodItemList);
         createFoodEqs();
     }
 
     void createFoodEqs()
     {
-        qDebug() << "Creating Food Eq";
         QHash<int, FoodNutr *> nutrsTable;
 
         for(int i = 0; i < foodItems.size(); i++) {
+            qDebug() << foodItems.size();
+            qDebug() << i;
+            qDebug() << foodItems.isEmpty();
+            qDebug() << foodItems[i];
             QList<FoodNutr *> nutrs = foodItems[i]->nutrients();
             float scaleFactor = foodItems[i]->scaleFactor;
             float amount = foodItems[i]->amount;
@@ -34,8 +38,10 @@ public:
             }
         }
 
-        FoodItem* totalItem = new FoodItem(new FoodID("0", name, name));
-        FoodItem* avgItem = new FoodItem(new FoodID("0", name, name));
+        FoodItem* totalItem = new FoodItem(foodItemList);
+        FoodItem* avgItem = new FoodItem(foodItemList);
+        totalItem->setFoodID(foodID);
+        avgItem->setFoodID(foodID);
         QHashIterator<int, FoodNutr *> h(nutrsTable);
         while (h.hasNext()) {
             h.next();
@@ -46,15 +52,29 @@ public:
 
         foodTotalEq = totalItem;
         foodAvgEq = avgItem;
-        qDebug() << "Food Eqs Created";
-        qDebug() << foodTotalEq;
+    }
+
+    bool setName(const QString &_name) {
+        if(name == _name) return false;
+        name = _name;
+        foodID->setLongDesc(name);
+        foodID->setShrtDesc(name);
+        return true;
+    }
+
+    void addSubFoodList() {
+        FoodItemList *subList = new FoodItemList(foodItemList);
+        subFoodLists.append(subList);
+        createFoodEqs();
     }
 
     QString name;
     QList<FoodItem *> foodItems;
+    QList<FoodItemList *> subFoodLists;
     FoodItem* foodTotalEq{nullptr};
     FoodItem* foodAvgEq{nullptr};
     FoodItemList* foodItemList{nullptr};
+    FoodID *foodID{nullptr};
 };
 
 FoodItemList::FoodItemList(QObject *parent) : QObject(parent)
@@ -100,11 +120,23 @@ FoodItem* FoodItemList::foodTotalEq()
 
 void FoodItemList::setName(const QString &name)
 {
-    if(implementation->name != name) {
-        implementation->name = name;
-        emit nameChanged();
-    }
+    if(implementation->setName(name)) emit nameChanged();
 }
 
+void FoodItemList::deleteSubFoodList(int index) {
+    implementation->subFoodLists.removeAt(index);
+    implementation->createFoodEqs();
+    emit subFoodListsChanged();
+}
 
+void FoodItemList::addSubFoodList()
+{
+    implementation->addSubFoodList();
+    emit subFoodListsChanged();
+}
+
+QQmlListProperty<FoodItemList> FoodItemList::subFoodLists()
+{
+    return QQmlListProperty<FoodItemList>(this, implementation->subFoodLists);
+}
 }}

@@ -5,6 +5,7 @@ import QtQuick.Layouts 1.12
 import NP 1.0
 
 Dialog {
+    id: root
     title: "Select Food from Database"
     standardButtons: Dialog.Ok | Dialog.Cancel
     property FoodItem foodItem
@@ -22,17 +23,22 @@ Dialog {
 
     RowLayout
     {
+        id: dialogContent
         anchors.fill: parent
         FoodSearcher {
             id: foodSearch
             width: parent.width / 4
-            height: parent.height
+            height: parent.width / 4
+            Layout.maximumWidth: parent.width / 4
+            Layout.fillWidth: true
+            Layout.fillHeight: true
         }
 
         FoodItemDisplay {
             id: foodDisplay
-            width: parent.width / 4 * 3
-            height: parent.height
+            Layout.preferredWidth: parent.width / 4 * 3
+            Layout.fillWidth: true
+            Layout.fillHeight: true
         }
     }
     Connections {

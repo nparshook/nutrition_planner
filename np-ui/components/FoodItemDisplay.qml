@@ -14,7 +14,7 @@ Item {
             horizontalAlignment: Text.AlignHCenter
             wrapMode: Text.WordWrap
             font.pointSize: 28
-            text: foodItem ? foodItem.foodID.longDesc : ''
+            text: foodItem ? foodItem.ui_foodID.ui_longDesc : ''
         }
     }
 }

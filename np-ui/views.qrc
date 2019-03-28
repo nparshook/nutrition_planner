@@ -2,5 +2,6 @@
     <qresource prefix="/views">
         <file alias="main.qml">views/main.qml</file>
         <file alias="NutritionPlanner.qml">views/NutritionPlanner.qml</file>
+        <file alias="FoodSelection.qml">views/FoodSelection.qml</file>
     </qresource>
 </RCC>

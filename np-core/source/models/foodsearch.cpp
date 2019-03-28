@@ -20,7 +20,7 @@ public:
     {
         foodSearchQuery = usdaDB->createPreparedQuery("SELECT ndb_no, shrt_desc, long_desc FROM food_des WHERE fdgrp_cd=:c AND shrt_desc LIKE :s;");
         foodSearchQueryAll = usdaDB->createPreparedQuery("SELECT ndb_no, shrt_desc, long_desc FROM food_des WHERE shrt_desc LIKE :s;");
-        foodWeightQuery = usdaDB->createPreparedQuery("SELECT amount, msre_desc, gm_wgt FROM weight WHERE ndb_no=:n;");
+        foodWeightQuery = usdaDB->createPreparedQuery("SELECT seq, amount, msre_desc, gm_wgt FROM weight WHERE ndb_no=:n;");
         foodNutrientsQuery = usdaDB->createPreparedQuery("SELECT nut_data.nutr_no, nut_data.nutr_val, nutr_def.units, nutr_def.tagname, nutr_def.nutrdesc FROM nut_data INNER JOIN nutr_def ON nut_data.nutr_no=nutr_def.nutr_no WHERE ndb_no=:n ORDER BY nutr_def.tagname;");
         foodGroupsQuery = usdaDB->createPreparedQuery("SELECT * FROM fd_group ORDER BY fdgrp_desc");
     }
@@ -67,9 +67,9 @@ public:
         return searchResults;
     }
 
-    FoodItem* getFood(FoodID *foodID)
+    FoodItem *getFood(FoodID *foodID)
     {
-        FoodItem *foodItem = new FoodItem();
+        FoodItem *foodItem = new FoodItem(foodSearch);
         foodItem->setFoodID(foodID);
         foodWeightQuery->bindValue(":n", foodID->ndbNo());
         foodWeightQuery->exec();
@@ -91,6 +91,8 @@ public:
                                                   foodNutrientsQuery->value("tagname").toString(),
                                                   foodNutrientsQuery->value("units").toString()));
         }
+        qDebug() << foodNutrientsQuery->lastError();
+        qDebug() << foodItem->foodID()->longDesc();
         return foodItem;
     }
 
@@ -114,7 +116,6 @@ FoodSearch::~FoodSearch() {}
 
 QQmlListProperty<FoodGrp> FoodSearch::foodGrps() {
     if(implementation->foodGrps.empty()) implementation->createFoodGrps();
-    qDebug() << implementation->foodGrps.size();
     return QQmlListProperty<FoodGrp>(this, implementation->foodGrps);
 }
 
@@ -123,9 +124,9 @@ QVariant FoodSearch::searchFoods(int foodGrpIdx, const QString &searchText) {
     return QVariant::fromValue(implementation->searchFoods(foodGrpIdx, searchText));
 }
 
-FoodItem* FoodSearch::getFood(FoodID *foodID)
+QVariant FoodSearch::getFood(FoodID *foodID)
 {
-    return implementation->getFood(foodID);
+    return QVariant::fromValue(implementation->getFood(foodID));
 }
 }
 }
