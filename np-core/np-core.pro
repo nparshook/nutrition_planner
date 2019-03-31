@@ -41,7 +41,8 @@ SOURCES += \
     source/models/foodsearch.cpp \
     source/controllers/databasecontroller.cpp \
     source/models/fooditem.cpp \
-    source/models/fooditemlist.cpp
+    source/models/fooditemlist.cpp \
+    source/models/nutrplan.cpp
 
 HEADERS += \
         source/controllers/mastercontroller.h \
@@ -53,7 +54,8 @@ HEADERS += \
     source/models/foodsearch.h \
     source/controllers/databasecontroller.h \
     source/models/fooditem.h \
-    source/models/fooditemlist.h
+    source/models/fooditemlist.h \
+    source/models/nutrplan.h
 
 unix {
     target.path = /usr/lib

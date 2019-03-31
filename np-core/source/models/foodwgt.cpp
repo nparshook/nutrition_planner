@@ -18,7 +18,7 @@ public:
     float gmWgt;
 };
 
-FoodWgt::FoodWgt(int seq, float amount, const QString &msreDesc, float gmWgt, QObject *parent)
+FoodWgt::FoodWgt(QObject *parent, int seq, float amount, const QString &msreDesc, float gmWgt)
     : QObject(parent)
 {
     implementation.reset(new Implementation(this, seq, amount, msreDesc, gmWgt));

@@ -12,13 +12,13 @@ namespace models {
 class NPCORESHARED_EXPORT FoodWgt : public QObject
 {
     Q_OBJECT
-    Q_PROPERTY(int ui_seq READ seq)
-    Q_PROPERTY(float ui_amount READ amount)
-    Q_PROPERTY(QString ui_msreDesc READ msreDesc)
-    Q_PROPERTY(float ui_gmWgt READ gmWgt)
+    Q_PROPERTY(int ui_seq READ seq CONSTANT)
+    Q_PROPERTY(float ui_amount READ amount CONSTANT)
+    Q_PROPERTY(QString ui_msreDesc READ msreDesc CONSTANT)
+    Q_PROPERTY(float ui_gmWgt READ gmWgt CONSTANT)
 
 public:
-    explicit FoodWgt(int seq, float amount, const QString &msreDesc, float gmWgt, QObject *parent = nullptr);
+    explicit FoodWgt(QObject *parent = nullptr, int seq=-1, float amount=0.0, const QString &msreDesc="MSREDESC", float gmWgt=1.0);
     ~FoodWgt();
 
     int seq() const;

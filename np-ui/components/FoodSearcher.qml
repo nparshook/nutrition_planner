@@ -25,7 +25,6 @@ Item {
             selectByMouse: true
             onTextChanged: {
                 resultsList.model = ui_foodSearch.searchFoods(foodGroupsComboBox.currentIndex, foodSearchText.text)
-                console.log(resultsList.model)
             }
         }
 
@@ -38,7 +37,6 @@ Item {
             Layout.alignment: Qt.AlignTop
             onCurrentIndexChanged: {
                 resultsList.model = ui_foodSearch.searchFoods(foodGroupsComboBox.currentIndex, foodSearchText.text)
-                console.log(resultsList.model)
             }
             Component.onCompleted: {
                 contentItem.selectByMouse = true

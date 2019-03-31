@@ -12,8 +12,8 @@ class NPCORESHARED_EXPORT FoodID : public QObject
 {
     Q_OBJECT
     Q_PROPERTY(QString ui_ndbNo READ ndbNo CONSTANT)
-    Q_PROPERTY(QString ui_shrtDesc READ shrtDesc CONSTANT)
-    Q_PROPERTY(QString ui_longDesc READ longDesc CONSTANT)
+    Q_PROPERTY(QString ui_shrtDesc READ shrtDesc NOTIFY shrtDescChanged)
+    Q_PROPERTY(QString ui_longDesc READ longDesc NOTIFY longDescChanged)
 
 public:
     explicit FoodID(const QString &ndbNo, const QString &shrtDesc, const QString &longDesc, QObject *parent=nullptr);
@@ -24,6 +24,10 @@ public:
 
     void setShrtDesc(const QString &shrtDesc);
     void setLongDesc(const QString &longDesc);
+
+signals:
+    void shrtDescChanged();
+    void longDescChanged();
 
 private:
     class Implementation;

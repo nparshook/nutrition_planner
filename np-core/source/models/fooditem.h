@@ -4,6 +4,7 @@
 #include <QObject>
 #include <QSharedPointer>
 #include <QList>
+#include <QQmlListProperty>
 
 #include "../np-core_global.h"
 #include "foodid.h"
@@ -20,6 +21,10 @@ class NPCORESHARED_EXPORT FoodItem : public QObject
     Q_PROPERTY(np::models::FoodNutr* ui_protein READ protein CONSTANT)
     Q_PROPERTY(np::models::FoodNutr* ui_fat READ fat CONSTANT)
     Q_PROPERTY(np::models::FoodNutr* ui_carbs READ carbs CONSTANT)
+    Q_PROPERTY(QQmlListProperty<np::models::FoodWgt> ui_weights READ weights CONSTANT)
+    Q_PROPERTY(float ui_scaleFactor READ scaleFactor NOTIFY scaleFactorChanged)
+    Q_PROPERTY(int ui_weightIdx READ weightIdx WRITE setWeightIdx NOTIFY weightIdxChanged)
+    Q_PROPERTY(float ui_amount READ amount WRITE setAmount NOTIFY amountChanged)
 
 public:
     explicit FoodItem(QObject *parent = nullptr);
@@ -32,8 +37,18 @@ public:
     FoodNutr *fat() const;
     FoodNutr *carbs() const;
     QList<FoodNutr*> nutrients();
-    const float scaleFactor = 1.0;
-    const float amount = 100.0;
+    QQmlListProperty<FoodWgt> weights();
+    int weightIdx() const;
+    void setWeightIdx(int idx);
+    float amount() const;
+    void setAmount(float amt);
+    float scaleFactor();
+    void setScaleFactor(float scaleFactor);
+
+signals:
+    void weightIdxChanged();
+    void amountChanged();
+    void scaleFactorChanged();
 
 private:
     class Implementation;

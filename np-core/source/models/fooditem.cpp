@@ -11,6 +11,10 @@ public:
     Implementation(FoodItem* _foodItem)
         : foodItem(_foodItem)
     {
+        weightIdx = 0;
+        amount = 100.0;
+        scaleFactor = 1.0;
+        weights.append(new FoodWgt(foodItem, -1, 1, "Grams", 1));
     }
 
     FoodItem* foodItem{nullptr};
@@ -20,7 +24,9 @@ public:
     FoodNutr* carbs{nullptr};
     QList<FoodWgt *>weights;
     QList<FoodNutr *> nutrients;
-
+    int weightIdx;
+    float amount;
+    float scaleFactor;
 };
 
 FoodItem::FoodItem(QObject *parent) : QObject(parent)
@@ -75,10 +81,10 @@ void FoodItem::appendNutrient(FoodNutr *nutrient)
         implementation->protein = nutrient;
         break;
     case 204:
-        implementation->protein = nutrient;
+        implementation->fat = nutrient;
         break;
     case 205:
-        implementation->protein = nutrient;
+        implementation->carbs = nutrient;
         break;
     /*case 208: m_cals = nutrient;
         break;
@@ -100,6 +106,50 @@ void FoodItem::appendNutrient(FoodNutr *nutrient)
             m_fattyAcids.append(nutrient);
             emit fattyAcidsChanged();
         }*/
+    }
+}
+
+int FoodItem::weightIdx() const
+{
+    return implementation->weightIdx;
+}
+
+void FoodItem::setWeightIdx(int idx) {
+    if (implementation->weightIdx != idx) {
+        implementation->weightIdx = idx;
+        implementation->scaleFactor = implementation->weights[implementation->weightIdx]->gmWgt();
+        emit weightIdxChanged();
+        emit scaleFactorChanged();
+    }
+}
+
+float FoodItem::amount() const
+{
+    return implementation->amount;
+}
+
+void FoodItem::setAmount(float amt) {
+    if (implementation->amount != amt) {
+        implementation->amount = amt;
+        emit amountChanged();
+    }
+}
+
+float FoodItem::scaleFactor()
+{
+    return implementation->scaleFactor;
+}
+
+QQmlListProperty<FoodWgt> FoodItem::weights()
+{
+    return QQmlListProperty<FoodWgt>(this, implementation->weights);
+}
+
+void FoodItem::setScaleFactor(float scaleFactor)
+{
+    if (implementation->scaleFactor != scaleFactor) {
+        implementation->scaleFactor = scaleFactor;
+        emit scaleFactorChanged();
     }
 }
 }}

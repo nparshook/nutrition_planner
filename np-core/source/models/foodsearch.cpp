@@ -75,7 +75,8 @@ public:
         foodWeightQuery->exec();
         while (foodWeightQuery->next())
         {
-            foodItem->appendWeight(new FoodWgt(foodWeightQuery->value("seq").toInt(),
+            foodItem->appendWeight(new FoodWgt(foodItem,
+                                               foodWeightQuery->value("seq").toInt(),
                                                foodWeightQuery->value("amount").toFloat(),
                                                foodWeightQuery->value("msre_desc").toString(),
                                                foodWeightQuery->value("gm_wgt").toFloat()));

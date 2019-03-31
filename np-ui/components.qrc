@@ -4,5 +4,6 @@
         <file alias="FoodSearcher.qml">components/FoodSearcher.qml</file>
         <file alias="FoodSelectDialog.qml">components/FoodSelectDialog.qml</file>
         <file alias="FoodItemDisplay.qml">components/FoodItemDisplay.qml</file>
+        <file alias="FoodItemListDisplay.qml">components/FoodItemListDisplay.qml</file>
     </qresource>
 </RCC>

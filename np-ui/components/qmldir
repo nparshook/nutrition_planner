@@ -2,3 +2,4 @@ module components
 FoodSearcher 1.0 FoodSearcher.qml
 FoodSelectDialog 1.0 FoodSelectDialog.qml
 FoodItemDisplay 1.0 FoodItemDisplay.qml
+FoodItemListDisplay 1.0 FoodItemListDisplay.qml

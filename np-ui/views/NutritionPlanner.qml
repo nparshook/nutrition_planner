@@ -48,7 +48,8 @@ Item {
                         }
                         dietList.currentIndex = index
                         masterController.ui_currentDiet = masterController.ui_diets[dietList.currentIndex]
-                        foodDisplay.foodItem = masterController.ui_currentDiet.foodTotalEq
+                        nutrContent.replace("qrc:/components/FoodItemListDisplay.qml")
+                        nutrContent.currentItem.foodItemList = masterController.ui_currentDiet
                         dietList.currentItem.highlighted = true
                     }
 
@@ -80,7 +81,7 @@ Item {
         Page {
             id: dayPage
             property FoodItemList diet: masterController.ui_currentDiet
-            visible: dayPage.diet ? true : false
+            enabled: dayPage.diet ? true : false
             Layout.preferredHeight: grid.height / 2
             Layout.preferredWidth: grid.width / 4
 
@@ -113,7 +114,8 @@ Item {
                         }
                         dayList.currentIndex = index
                         masterController.ui_currentDay = dayPage.diet.ui_subFoodLists[dayList.currentIndex]
-                        foodDisplay.foodItem = masterController.ui_currentDay.foodTotalEq
+                        nutrContent.replace("qrc:/components/FoodItemListDisplay.qml")
+                        nutrContent.currentItem.foodItemList = masterController.ui_currentDay
                         dayList.currentItem.highlighted = true
                     }
 
@@ -134,7 +136,7 @@ Item {
         Page {
             id: mealPage
             property FoodItemList day: masterController.ui_currentDay
-            visible: mealPage.day ? true : false
+            enabled: mealPage.day ? true : false
             Layout.preferredHeight: grid.height / 2
             Layout.preferredWidth: grid.width / 4
 
@@ -167,7 +169,9 @@ Item {
                         }
                         mealList.currentIndex = index
                         masterController.ui_currentMeal = mealPage.day.ui_subFoodLists[mealList.currentIndex]
-                        foodDisplay.foodItem = masterController.ui_currentMeal.foodTotalEq
+                        nutrContent.replace("qrc:/components/FoodItemListDisplay.qml")
+                        nutrContent.currentItem.foodItemList = masterController.ui_currentMeal
+                        nutrContent.currentItem.weight = true
                         mealList.currentItem.highlighted = true
                     }
 
@@ -188,7 +192,7 @@ Item {
         Page {
             id: foodPage
             property FoodItemList meal: masterController.ui_currentMeal
-            visible: foodPage.meal ? true : false
+            enabled: foodPage.meal ? true : false
             Layout.preferredHeight: grid.height / 2
             Layout.preferredWidth: grid.width / 4
 
@@ -200,19 +204,26 @@ Item {
                 }
 
                 Button {
+                    id: getFoodBtn
                     Layout.fillWidth: true
                     text: "Get Food"
                     onClicked: {
                         nutrContent.push("qrc:/views/FoodSelection.qml")
+                        nutrContent.currentItem.forceActiveFocus()
                         nutrContent.currentItem.foodSelectionFinished.connect(nutrContent.pop)
                         nutrContent.currentItem.foodSelectionFinished.connect(reEnable)
                         nutrContent.currentItem.addFoodItem.connect(foodPage.appendFoodItem)
-                        enabled = false
+                        foodPage.enabled = false
+                        dietPage.enabled = false
+                        dayPage.enabled = false
+                        mealPage.enabled = false
                     }
 
                     function reEnable() {
-                        console.log("Renabled")
-                        enabled = true
+                        foodPage.enabled = true
+                        dietPage.enabled = true
+                        dayPage.enabled = true
+                        mealPage.enabled = true
                     }
                 }
             }
@@ -238,7 +249,9 @@ Item {
                             foodsList.currentItem.highlighted = false
                         }
                         foodsList.currentIndex = index
-                        foodDisplay.foodItem = foodPage.meal.foodItems[foodsList.currentIndex]
+                        nutrContent.replace("qrc:/components/FoodItemDisplay.qml")
+                        nutrContent.currentItem.servings = true
+                        nutrContent.currentItem.foodItem = foodPage.meal.foodItems[foodsList.currentIndex]
                         foodsList.currentItem.highlighted = true
                     }
 

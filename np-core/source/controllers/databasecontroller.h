@@ -18,10 +18,12 @@ class NPCORESHARED_EXPORT DatabaseController : public QObject
     Q_OBJECT
 
 public:
-    DatabaseController(QObject* parent = nullptr, const QString& databaseName = QDir::currentPath() + "/usda.db");
+    DatabaseController(QObject* parent = nullptr, const QString& databaseName = QDir::currentPath() + "/usda.db", const QString& dbConnName = "conn");
     ~DatabaseController();
     bool isReady();
+    bool hasTable(const QString & tableName);
     QSqlQuery* createPreparedQuery(const QString& queryString);
+
 private:
     class Implementation;
     QScopedPointer<Implementation> implementation;

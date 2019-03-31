@@ -1,6 +1,8 @@
 #include "mastercontroller.h"
 #include <QDebug>
 #include <QList>
+#include <QDir>
+#include "../models/nutrplan.h"
 
 using namespace np::models;
 
@@ -14,22 +16,32 @@ public:
         : masterController(_masterController)
     {
         usdaDBController = new DatabaseController(masterController);
+        nutrPlanDBController = new DatabaseController(masterController, QDir::currentPath() + "/nps.db", "conn2");
         qDebug() << usdaDBController->isReady();
+        qDebug() << nutrPlanDBController->isReady();
         foodSearch = new FoodSearch(masterController, usdaDBController);
+        nutrPlan = new NutrPlan(masterController, nutrPlanDBController);
+        qDebug() << "System Ready";
     }
 
     void addDiet() {
-        FoodItemList *newDiet = new FoodItemList(masterController);
-        newDiet->setName("New Diet");
-        diets.append(newDiet);
+        diets.append(nutrPlan->createDiet());
     }
+
+    /*QList<FoodItemList*> diets() {
+        qDebug() << "Diets";
+        qDebug() << nutrPlan->diets();
+        return nutrPlan->diets();
+    }*/
 
     MasterController* masterController{nullptr};
     DatabaseController* usdaDBController{nullptr};
+    DatabaseController* nutrPlanDBController{nullptr};
     FoodSearch* foodSearch{nullptr};
     FoodItemList* currentDiet{nullptr};
     FoodItemList* currentDay{nullptr};
     FoodItemList* currentMeal{nullptr};
+    NutrPlan* nutrPlan{nullptr};
     QList<FoodItemList*> diets;
     QString welcomeMessage = "Welcome";
 };
@@ -56,6 +68,9 @@ FoodSearch *MasterController::foodSearch()
 
 QQmlListProperty<FoodItemList> MasterController::diets()
 {
+        //QList<FoodItemList *> mDiets = implementation->diets();
+        //qDebug() << "Got Diets";
+        //qDebug() << mDiets;
         return QQmlListProperty<FoodItemList>(this, implementation->diets);
 }
 

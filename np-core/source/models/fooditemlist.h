@@ -18,7 +18,9 @@ class NPCORESHARED_EXPORT FoodItemList : public QObject
     Q_PROPERTY(QQmlListProperty<np::models::FoodItemList> ui_subFoodLists READ subFoodLists NOTIFY subFoodListsChanged)
     Q_PROPERTY(QString ui_name READ name WRITE setName NOTIFY nameChanged)
     Q_PROPERTY(FoodItem* foodTotalEq READ foodTotalEq NOTIFY foodEqChanged)
-    Q_PROPERTY(FoodItem* foodAvgEq READ foodAvgEq NOTIFY foodEqChanged)
+    Q_PROPERTY(FoodItem* foodAvgEq READ foodAvgEq NOTIFY foodAvgChanged)
+    Q_PROPERTY(float ui_gmWgt READ gmWgt NOTIFY gmWgtChanged)
+    Q_PROPERTY(float ui_amount READ amount WRITE setAmount NOTIFY amountChanged)
 
 public:
     FoodItemList(QObject *parent = nullptr);
@@ -35,12 +37,24 @@ public:
 
     FoodItem* foodTotalEq();
     FoodItem* foodAvgEq();
+    float gmWgt();
+    float amount();
+    void setAmount(float amount);
+
+    void setKey(int key);
+    int key();
+
+public slots:
+    void recalculate();
 
 signals:
     void foodItemsChanged();
     void subFoodListsChanged();
     void nameChanged();
     void foodEqChanged();
+    void foodAvgChanged();
+    void gmWgtChanged();
+    void amountChanged();
 
 private:
     class Implementation;

@@ -9,19 +9,19 @@ namespace controllers {
 class DatabaseController::Implementation
 {
 public:
-    Implementation(DatabaseController* _dbController, const QString& dbName)
+    Implementation(DatabaseController* _dbController, const QString& dbName, const QString& dbConn)
         : dbController(_dbController)
     {
-        initialize(dbName);
+        initialize(dbName, dbConn);
     }
 
     ~Implementation() {
         db.close();
     }
 
-    void initialize(const QString& dbName) {
+    void initialize(const QString& dbName, const QString& dbConn) {
         qDebug() << dbName;
-        db = QSqlDatabase::addDatabase("QSQLITE");
+        db = QSqlDatabase::addDatabase("QSQLITE", dbConn);
         db.setDatabaseName(dbName);
         if (!db.open()) {
             ready = false;
@@ -35,10 +35,10 @@ public:
     bool ready = false;
 };
 
-DatabaseController::DatabaseController(QObject* parent, const QString& databasename)
+DatabaseController::DatabaseController(QObject* parent, const QString& databasename, const QString& dbConnName)
     : QObject(parent)
 {
-    implementation.reset(new Implementation(this, databasename));
+    implementation.reset(new Implementation(this, databasename, dbConnName));
 }
 
 DatabaseController::~DatabaseController() {}
@@ -52,6 +52,10 @@ QSqlQuery* DatabaseController::createPreparedQuery(const QString &queryString)
     QSqlQuery* query = new QSqlQuery(implementation->db);
     query->prepare(queryString);
     return query;
+}
+
+bool DatabaseController::hasTable(const QString &tableName) {
+    return implementation->db.tables().contains(tableName);
 }
 
 }}

@@ -45,10 +45,16 @@ QString FoodID::longDesc() const
 
 void FoodID::setLongDesc(const QString &longDesc)
 {
-    if(longDesc != implementation->longDesc) implementation->longDesc = longDesc;
+    if(longDesc != implementation->longDesc) {
+        implementation->longDesc = longDesc;
+        emit longDescChanged();
+    }
 }
 
 void FoodID::setShrtDesc(const QString &shrtDesc) {
-    if(shrtDesc != implementation->shrtDesc) implementation->shrtDesc = shrtDesc;
+    if(shrtDesc != implementation->shrtDesc) {
+        implementation->shrtDesc = shrtDesc;
+        emit shrtDescChanged();
+    }
 }
 }}
