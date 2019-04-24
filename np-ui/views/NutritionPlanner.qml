@@ -48,8 +48,8 @@ Item {
                         }
                         dietList.currentIndex = index
                         masterController.ui_currentDiet = masterController.ui_diets[dietList.currentIndex]
-                        nutrContent.replace("qrc:/components/FoodItemListDisplay.qml")
-                        nutrContent.currentItem.foodItemList = masterController.ui_currentDiet
+                        nutrContent.replace("qrc:/components/DietDisplay.qml")
+                        nutrContent.currentItem.diet = masterController.ui_currentDiet
                         dietList.currentItem.highlighted = true
                     }
 
@@ -80,7 +80,7 @@ Item {
 
         Page {
             id: dayPage
-            property FoodItemList diet: masterController.ui_currentDiet
+            property Diet diet: masterController.ui_currentDiet
             enabled: dayPage.diet ? true : false
             Layout.preferredHeight: grid.height / 2
             Layout.preferredWidth: grid.width / 4
@@ -95,7 +95,7 @@ Item {
                 Button {
                     Layout.fillWidth: true
                     text: "New Day"
-                    onClicked: dayPage.diet.addSubFoodList()
+                    onClicked: masterController.addNewDayToCurrentDiet()
                 }
             }
             ListView {

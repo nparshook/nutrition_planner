@@ -32,6 +32,8 @@ public:
     Q_INVOKABLE void addSubFoodList();
     Q_INVOKABLE void deleteSubFoodList(int index);
 
+    FoodItemList* newSubFoodList();
+
     QString name() const;
     void setName(const QString &name);
 

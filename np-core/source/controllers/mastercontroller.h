@@ -7,9 +7,10 @@
 #include <QQmlListProperty>
 
 #include "../np-core_global.h"
-#include "databasecontroller.h"
+#include "../database/databasemanager.h"
 #include "../models/foodsearch.h"
 #include "../models/fooditemlist.h"
+#include "../models/diet.h"
 
 namespace np {
 namespace controllers {
@@ -20,20 +21,21 @@ class NPCORESHARED_EXPORT MasterController : public QObject
     Q_PROPERTY(QString ui_welcomeMessage READ welcomeMessage CONSTANT)
 
     Q_PROPERTY(np::models::FoodSearch *ui_foodSearch READ foodSearch CONSTANT)
-    Q_PROPERTY(np::models::FoodItemList *ui_currentDiet READ currentDiet WRITE setCurrentDiet NOTIFY currentDietChanged)
+    Q_PROPERTY(np::models::Diet *ui_currentDiet READ currentDiet WRITE setCurrentDiet NOTIFY currentDietChanged)
     Q_PROPERTY(np::models::FoodItemList *ui_currentDay READ currentDay WRITE setCurrentDay NOTIFY currentDayChanged)
     Q_PROPERTY(np::models::FoodItemList *ui_currentMeal READ currentMeal WRITE setCurrentMeal NOTIFY currentMealChanged)
-    Q_PROPERTY(QQmlListProperty<np::models::FoodItemList> ui_diets READ diets NOTIFY dietsChanged)
+    Q_PROPERTY(QQmlListProperty<np::models::Diet> ui_diets READ diets NOTIFY dietsChanged)
 
 public:
     explicit MasterController(QObject* parent = nullptr);
     ~MasterController();
     const QString& welcomeMessage() const;
     np::models::FoodSearch* foodSearch();
-    QQmlListProperty<np::models::FoodItemList> diets();
+    QQmlListProperty<np::models::Diet> diets();
     Q_INVOKABLE void addDiet();
-    np::models::FoodItemList* currentDiet();
-    void setCurrentDiet(np::models::FoodItemList* diet);
+    Q_INVOKABLE void addNewDayToCurrentDiet();
+    np::models::Diet* currentDiet();
+    void setCurrentDiet(np::models::Diet* diet);
     np::models::FoodItemList* currentDay();
     void setCurrentDay(np::models::FoodItemList* day);
     np::models::FoodItemList* currentMeal();

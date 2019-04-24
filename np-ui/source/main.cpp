@@ -7,6 +7,7 @@
 #include <models/foodwgt.h>
 #include <models/fooditem.h>
 #include <models/fooditemlist.h>
+#include <models/diet.h>
 
 int main(int argc, char *argv[])
 {
@@ -21,6 +22,7 @@ int main(int argc, char *argv[])
     qmlRegisterType<np::models::FoodItem>("NP", 1, 0, "FoodItem");
     qmlRegisterType<np::models::FoodItemList>("NP", 1, 0, "FoodItemList");
     qmlRegisterType<np::models::FoodSearch>("NP", 1, 0, "FoodSearch");
+    qmlRegisterType<np::models::Diet>("NP", 1, 0, "Diet");
 
     np::controllers::MasterController masterController;
 

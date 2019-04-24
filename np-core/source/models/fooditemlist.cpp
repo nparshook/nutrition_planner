@@ -168,11 +168,21 @@ void FoodItemList::deleteSubFoodList(int index) {
 
 void FoodItemList::addSubFoodList()
 {
-    FoodItemList * newSubList = implementation->addSubFoodList();
+    FoodItemList* newSubList = implementation->addSubFoodList();
     QObject::connect(newSubList, &FoodItemList::foodEqChanged, this, &FoodItemList::recalculate);
     QObject::connect(newSubList, &FoodItemList::foodAvgChanged, this, &FoodItemList::recalculate);
     QObject::connect(newSubList, &FoodItemList::amountChanged, this, &FoodItemList::recalculate);
     emit subFoodListsChanged();
+}
+
+FoodItemList* FoodItemList::newSubFoodList()
+{
+    FoodItemList* newSubList = implementation->addSubFoodList();
+    QObject::connect(newSubList, &FoodItemList::foodEqChanged, this, &FoodItemList::recalculate);
+    QObject::connect(newSubList, &FoodItemList::foodAvgChanged, this, &FoodItemList::recalculate);
+    QObject::connect(newSubList, &FoodItemList::amountChanged, this, &FoodItemList::recalculate);
+    emit subFoodListsChanged();
+    return newSubList;
 }
 
 QQmlListProperty<FoodItemList> FoodItemList::subFoodLists()

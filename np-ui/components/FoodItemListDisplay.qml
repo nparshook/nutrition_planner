@@ -7,7 +7,7 @@ import components 1.0;
 
 Item {
     id: root
-    property FoodItemList foodItemList
+    property Diet foodItemList
     property FoodItem foodItem: foodItemList ? foodItemList.foodTotalEq : null
     property bool weight: false
 

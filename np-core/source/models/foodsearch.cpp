@@ -4,9 +4,9 @@
 #include <QSqlError>
 #include <QList>
 #include <QVariant>
-#include "../controllers/databasecontroller.h"
+#include "../database/databasemanager.h"
 
-using namespace np::controllers;
+using namespace np::database;
 
 namespace np {
 namespace models {
@@ -15,7 +15,7 @@ namespace models {
 class FoodSearch::Implementation
 {
 public:
-    Implementation(FoodSearch* _foodSearch, DatabaseController* _usdaDB)
+    Implementation(FoodSearch* _foodSearch, DatabaseManager* _usdaDB)
         : foodSearch(_foodSearch), usdaDB(_usdaDB)
     {
         foodSearchQuery = usdaDB->createPreparedQuery("SELECT ndb_no, shrt_desc, long_desc FROM food_des WHERE fdgrp_cd=:c AND shrt_desc LIKE :s;");
@@ -98,7 +98,7 @@ public:
     }
 
     FoodSearch* foodSearch{nullptr};
-    DatabaseController* usdaDB{nullptr};
+    DatabaseManager* usdaDB{nullptr};
     QSqlQuery* foodSearchQuery;
     QSqlQuery* foodSearchQueryAll;
     QSqlQuery* foodWeightQuery;
@@ -107,7 +107,7 @@ public:
     QList<FoodGrp *>foodGrps;
 };
 
-FoodSearch::FoodSearch(QObject *parent, DatabaseController* usdaDB)
+FoodSearch::FoodSearch(QObject *parent, DatabaseManager* usdaDB)
     : QObject(parent)
 {
     implementation.reset(new Implementation(this, usdaDB));

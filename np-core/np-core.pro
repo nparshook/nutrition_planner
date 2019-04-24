@@ -34,28 +34,30 @@ DEFINES += QT_DEPRECATED_WARNINGS
 
 SOURCES += \
         source/controllers/mastercontroller.cpp \
+    source/models/diet.cpp \
     source/models/foodgrp.cpp \
     source/models/foodwgt.cpp \
     source/models/foodnutr.cpp \
     source/models/foodid.cpp \
     source/models/foodsearch.cpp \
-    source/controllers/databasecontroller.cpp \
     source/models/fooditem.cpp \
     source/models/fooditemlist.cpp \
-    source/models/nutrplan.cpp
+    source/models/nutrplan.cpp \
+    source/database/databasemanager.cpp
 
 HEADERS += \
         source/controllers/mastercontroller.h \
+    source/models/diet.h \
     source/models/foodgrp.h \
     source/models/foodwgt.h \
     source/models/foodnutr.h \
     source/models/foodid.h \
     source/np-core_global.h \
     source/models/foodsearch.h \
-    source/controllers/databasecontroller.h \
     source/models/fooditem.h \
     source/models/fooditemlist.h \
-    source/models/nutrplan.h
+    source/models/nutrplan.h \
+    source/database/databasemanager.h
 
 unix {
     target.path = /usr/lib

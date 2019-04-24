@@ -4,7 +4,7 @@
 #include <QObject>
 #include <QQmlListProperty>
 #include "../np-core_global.h"
-#include "../controllers/databasecontroller.h"
+#include "../database/databasemanager.h"
 #include "foodgrp.h"
 #include "foodid.h"
 #include "fooditem.h"
@@ -18,7 +18,7 @@ class NPCORESHARED_EXPORT FoodSearch : public QObject
     Q_PROPERTY(QQmlListProperty<np::models::FoodGrp> ui_foodGrps READ foodGrps CONSTANT)
 
 public:
-    explicit FoodSearch( QObject *parent = nullptr, np::controllers::DatabaseController* usdaDB = nullptr);
+    explicit FoodSearch( QObject *parent = nullptr, np::database::DatabaseManager* usdaDB = nullptr);
     ~FoodSearch();
     QQmlListProperty<FoodGrp> foodGrps();
     Q_INVOKABLE QVariant searchFoods(int foodGrpIdx, const QString &searchText);
