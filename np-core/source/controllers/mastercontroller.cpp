@@ -32,6 +32,7 @@ public:
 
         QSqlQuery *getDietsQuery = nutrPlanDBController->createPreparedQuery("SELECT id FROM diets");
         getDietsQuery->exec();
+        dietList.clear();
         while (getDietsQuery->next())
         {
             Diet *diet = new Diet(getDietsQuery->value("id").toInt(), nutrPlanDBController, masterController);
@@ -39,18 +40,28 @@ public:
         }
     }
 
-    void addDiet() {
-        dietList.append(new Diet(nutrPlanDBController, masterController));
+    void loadDays() {
+        QSqlQuery *getDaysQuery = nutrPlanDBController->createPreparedQuery("SELECT id FROM days WHERE diet_id=(:id)");
+        getDaysQuery->bindValue(":id", currentDiet->key());
+        getDaysQuery->exec();
+        dayList.clear();
+        while (getDaysQuery->next())
+        {
+            Day *day = new Day(getDaysQuery->value("id").toInt(), nutrPlanDBController, false, masterController);
+            dayList.append(day);
+        }
     }
 
-    void addNewDay(FoodItemList *diet) {
-        nutrPlan->createDay(diet);
+    Diet* addDiet() {
+        Diet* newDiet = new Diet(nutrPlanDBController, masterController);
+        dietList.append(newDiet);
+        return newDiet;
     }
 
-    QQmlListProperty<FoodItemList> diets() {
-        qDebug() << "Diets";
-        //qDebug() << nutrPlan->diets();
-        return nutrPlan->diets();
+    Day* addNewDay() {
+        Day* newDay = new Day(currentDiet->key(), nutrPlanDBController, true, masterController);
+        dayList.append(newDay);
+        return newDay;
     }
 
     MasterController* masterController{nullptr};
@@ -58,10 +69,11 @@ public:
     DatabaseManager* nutrPlanDBController{nullptr};
     FoodSearch* foodSearch{nullptr};
     Diet* currentDiet{nullptr};
-    FoodItemList* currentDay{nullptr};
+    Day* currentDay{nullptr};
     FoodItemList* currentMeal{nullptr};
     NutrPlan* nutrPlan{nullptr};
     QList<Diet*> dietList;
+    QList<Day*> dayList;
     QString welcomeMessage = "Welcome";
 };
 
@@ -87,21 +99,25 @@ FoodSearch *MasterController::foodSearch()
 
 QQmlListProperty<Diet> MasterController::diets()
 {
-        //return implementation->diets();
-        //qDebug() << "Got Diets";
-        //qDebug() << mDiets;
-        return QQmlListProperty<Diet>(this, implementation->dietList);
-        //return QQmlListProperty<FoodItemList>(this, mDiets);
+    return QQmlListProperty<Diet>(this, implementation->dietList);
 }
 
 void MasterController::addDiet()
 {
-    implementation->addDiet();
+    Diet* newDiet = implementation->addDiet();
     emit dietsChanged();
+    setCurrentDiet(newDiet);
 }
 
 void MasterController::addNewDayToCurrentDiet() {
-    //implementation->addNewDay(implementation->currentDiet);
+    Day* newDay = implementation->addNewDay();
+    emit daysChanged();
+    setCurrentDay(newDay);
+}
+
+QQmlListProperty<Day> MasterController::days()
+{
+    return QQmlListProperty<Day>(this, implementation->dayList);
 }
 
 Diet *MasterController::currentDiet()
@@ -112,17 +128,19 @@ Diet *MasterController::currentDiet()
 void MasterController::setCurrentDiet(np::models::Diet *diet){
     if(diet != implementation->currentDiet) {
         implementation->currentDiet = diet;
+        implementation->loadDays();
         setCurrentDay(nullptr);
         emit currentDietChanged();
+        emit daysChanged();
     }
 }
 
-FoodItemList *MasterController::currentDay()
+Day *MasterController::currentDay()
 {
     return implementation->currentDay;
 }
 
-void MasterController::setCurrentDay(np::models::FoodItemList *day){
+void MasterController::setCurrentDay(np::models::Day *day){
     if(day != implementation->currentDay) {
         implementation->currentDay = day;
         setCurrentMeal(nullptr);

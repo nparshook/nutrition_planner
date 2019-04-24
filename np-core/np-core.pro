@@ -34,6 +34,7 @@ DEFINES += QT_DEPRECATED_WARNINGS
 
 SOURCES += \
         source/controllers/mastercontroller.cpp \
+    source/models/day.cpp \
     source/models/diet.cpp \
     source/models/foodgrp.cpp \
     source/models/foodwgt.cpp \
@@ -47,6 +48,7 @@ SOURCES += \
 
 HEADERS += \
         source/controllers/mastercontroller.h \
+    source/models/day.h \
     source/models/diet.h \
     source/models/foodgrp.h \
     source/models/foodwgt.h \

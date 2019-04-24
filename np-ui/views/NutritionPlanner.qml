@@ -113,9 +113,9 @@ Item {
                             dayList.currentItem.highlighted = false
                         }
                         dayList.currentIndex = index
-                        masterController.ui_currentDay = dayPage.diet.ui_subFoodLists[dayList.currentIndex]
-                        nutrContent.replace("qrc:/components/FoodItemListDisplay.qml")
-                        nutrContent.currentItem.foodItemList = masterController.ui_currentDay
+                        masterController.ui_currentDay = masterController.ui_days[dayList.currentIndex]
+                        nutrContent.replace("qrc:/components/DayDisplay.qml")
+                        nutrContent.currentItem.day = masterController.ui_currentDay
                         dayList.currentItem.highlighted = true
                     }
 
@@ -125,7 +125,7 @@ Item {
                     }
                 }
 
-                model: dayPage.diet ? dayPage.diet.ui_subFoodLists : []
+                model: masterController.ui_days
 
                 ScrollIndicator.vertical: ScrollIndicator {}
 
@@ -135,7 +135,7 @@ Item {
 
         Page {
             id: mealPage
-            property FoodItemList day: masterController.ui_currentDay
+            property Day day: masterController.ui_currentDay
             enabled: mealPage.day ? true : false
             Layout.preferredHeight: grid.height / 2
             Layout.preferredWidth: grid.width / 4

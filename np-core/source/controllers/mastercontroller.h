@@ -11,6 +11,7 @@
 #include "../models/foodsearch.h"
 #include "../models/fooditemlist.h"
 #include "../models/diet.h"
+#include "../models/day.h"
 
 namespace np {
 namespace controllers {
@@ -22,9 +23,10 @@ class NPCORESHARED_EXPORT MasterController : public QObject
 
     Q_PROPERTY(np::models::FoodSearch *ui_foodSearch READ foodSearch CONSTANT)
     Q_PROPERTY(np::models::Diet *ui_currentDiet READ currentDiet WRITE setCurrentDiet NOTIFY currentDietChanged)
-    Q_PROPERTY(np::models::FoodItemList *ui_currentDay READ currentDay WRITE setCurrentDay NOTIFY currentDayChanged)
+    Q_PROPERTY(np::models::Day *ui_currentDay READ currentDay WRITE setCurrentDay NOTIFY currentDayChanged)
     Q_PROPERTY(np::models::FoodItemList *ui_currentMeal READ currentMeal WRITE setCurrentMeal NOTIFY currentMealChanged)
     Q_PROPERTY(QQmlListProperty<np::models::Diet> ui_diets READ diets NOTIFY dietsChanged)
+    Q_PROPERTY(QQmlListProperty<np::models::Day> ui_days READ days NOTIFY daysChanged)
 
 public:
     explicit MasterController(QObject* parent = nullptr);
@@ -32,17 +34,19 @@ public:
     const QString& welcomeMessage() const;
     np::models::FoodSearch* foodSearch();
     QQmlListProperty<np::models::Diet> diets();
+    QQmlListProperty<np::models::Day> days();
     Q_INVOKABLE void addDiet();
     Q_INVOKABLE void addNewDayToCurrentDiet();
     np::models::Diet* currentDiet();
     void setCurrentDiet(np::models::Diet* diet);
-    np::models::FoodItemList* currentDay();
-    void setCurrentDay(np::models::FoodItemList* day);
+    np::models::Day* currentDay();
+    void setCurrentDay(np::models::Day* day);
     np::models::FoodItemList* currentMeal();
     void setCurrentMeal(np::models::FoodItemList* meal);
 
 signals:
     void dietsChanged();
+    void daysChanged();
     void currentDietChanged();
     void currentDayChanged();
     void currentMealChanged();

@@ -6,5 +6,6 @@
         <file alias="FoodItemDisplay.qml">components/FoodItemDisplay.qml</file>
         <file alias="FoodItemListDisplay.qml">components/FoodItemListDisplay.qml</file>
         <file alias="DietDisplay.qml">components/DietDisplay.qml</file>
+        <file alias="DayDisplay.qml">components/DayDisplay.qml</file>
     </qresource>
 </RCC>

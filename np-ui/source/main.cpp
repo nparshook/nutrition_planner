@@ -8,6 +8,7 @@
 #include <models/fooditem.h>
 #include <models/fooditemlist.h>
 #include <models/diet.h>
+#include <models/day.h>
 
 int main(int argc, char *argv[])
 {
@@ -23,6 +24,7 @@ int main(int argc, char *argv[])
     qmlRegisterType<np::models::FoodItemList>("NP", 1, 0, "FoodItemList");
     qmlRegisterType<np::models::FoodSearch>("NP", 1, 0, "FoodSearch");
     qmlRegisterType<np::models::Diet>("NP", 1, 0, "Diet");
+    qmlRegisterType<np::models::Day>("NP", 1, 0, "Day");
 
     np::controllers::MasterController masterController;
 
