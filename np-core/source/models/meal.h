@@ -7,6 +7,7 @@
 
 #include "../np-core_global.h"
 #include "fooditem.h"
+#include "foodsearch.h"
 #include "../database/databasemanager.h"
 
 namespace np {
@@ -18,10 +19,12 @@ class NPCORESHARED_EXPORT Meal : public QObject
     Q_PROPERTY(QString ui_name READ name WRITE setName NOTIFY nameChanged)
     Q_PROPERTY(FoodItem* foodTotalEq READ foodTotalEq NOTIFY foodEqChanged)
     Q_PROPERTY(FoodItem* foodAvgEq READ foodAvgEq NOTIFY foodAvgChanged)
+    Q_PROPERTY(QQmlListProperty<np::models::FoodItem> ui_foods READ foods NOTIFY foodsChanged)
+
 
 public:
     Meal(QObject *parent = nullptr);
-    Meal(int dietID, np::database::DatabaseManager *manager, bool isNew = true, QObject *parent = nullptr);
+    Meal(int dietID, np::database::DatabaseManager *manager, FoodSearch* searcher, bool isNew = true, QObject *parent = nullptr);
     ~Meal();
 
     QString name() const;
@@ -33,8 +36,12 @@ public:
     FoodItem* foodTotalEq();
     FoodItem* foodAvgEq();
 
+    QQmlListProperty<np::models::FoodItem> foods();
+    Q_INVOKABLE void appendFood(FoodItem* item);
+
 signals:
     void nameChanged();
+    void foodsChanged();
     void foodEqChanged();
     void foodAvgChanged();
 

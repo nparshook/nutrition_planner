@@ -216,6 +216,8 @@ Item {
             Layout.preferredHeight: grid.height / 2
             Layout.preferredWidth: grid.width / 4
 
+            onMealChanged: foodsList.model = meal.ui_foods
+
             header: RowLayout {
                 Text {
                     Layout.fillWidth: true
@@ -250,8 +252,8 @@ Item {
 
             function appendFoodItem(item) {
                 foodPage.meal.appendFood(item)
-                foodsList.currentIndex = foodPage.meal.foodItems.length - 1
-                foodDisplay.foodItem = foodPage.meal.foodItems[foodsList.currentIndex]
+                foodsList.currentIndex = foodPage.meal.ui_foods.length - 1
+                foodDisplay.foodItem = foodPage.meal.ui_foods[foodsList.currentIndex]
             }
 
             ListView {
@@ -271,7 +273,7 @@ Item {
                         foodsList.currentIndex = index
                         nutrContent.replace("qrc:/components/FoodItemDisplay.qml")
                         nutrContent.currentItem.servings = true
-                        nutrContent.currentItem.foodItem = foodPage.meal.foodItems[foodsList.currentIndex]
+                        nutrContent.currentItem.foodItem = foodPage.meal.ui_foods[foodsList.currentIndex]
                         foodsList.currentItem.highlighted = true
                     }
 
@@ -281,7 +283,7 @@ Item {
                     }
                 }
 
-                model: foodPage.meal ? foodPage.meal.foodItems : null
+                model: []
 
                 ScrollIndicator.vertical: ScrollIndicator {}
 

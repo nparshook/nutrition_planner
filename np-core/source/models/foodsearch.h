@@ -23,6 +23,7 @@ public:
     QQmlListProperty<FoodGrp> foodGrps();
     Q_INVOKABLE QVariant searchFoods(int foodGrpIdx, const QString &searchText);
     Q_INVOKABLE QVariant getFood(FoodID *);
+    FoodItem* getFoodByNdb(const QString &ndb_no);
 
 private:
     class Implementation;

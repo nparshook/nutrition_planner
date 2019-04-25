@@ -32,13 +32,13 @@ public:
         dietList.clear();
         while (getDietsQuery->next())
         {
-            Diet *diet = new Diet(getDietsQuery->value("id").toInt(), nutrPlanDBController, masterController);
+            Diet *diet = new Diet(getDietsQuery->value("id").toInt(), nutrPlanDBController, foodSearch, masterController);
             dietList.append(diet);
         }
     }
 
     Diet* addDiet() {
-        Diet* newDiet = new Diet(nutrPlanDBController, masterController);
+        Diet* newDiet = new Diet(nutrPlanDBController, foodSearch, masterController);
         dietList.append(newDiet);
         return newDiet;
     }

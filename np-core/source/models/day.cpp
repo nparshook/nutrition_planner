@@ -11,8 +11,8 @@ namespace models {
 class Day::Implementation {
 public:
 
-    Implementation(Day* _day, DatabaseManager* _manager, int ID, bool isNew)
-        : day(_day), manager(_manager)
+    Implementation(Day* _day, DatabaseManager* _manager, FoodSearch* _searcher, int ID, bool isNew)
+        : day(_day), manager(_manager), searcher(_searcher)
     {
         name = "New day...";
         foodID = new FoodID("0", name, name, day);
@@ -72,20 +72,21 @@ public:
         mealList.clear();
         while (getDaysQuery->next())
         {
-            Meal *meal = new Meal(getDaysQuery->value("id").toInt(), manager, false, day);
+            Meal *meal = new Meal(getDaysQuery->value("id").toInt(), manager, searcher, false, day);
             mealList.append(meal);
         }
         mealsLoaded = true;
     }
 
     Meal* newMeal() {
-        Meal* newMeal = new Meal(key, manager, true, day);
+        Meal* newMeal = new Meal(key, manager, searcher, true, day);
         mealList.append(newMeal);
         return newMeal;
     }
 
     Day* day{nullptr};
     DatabaseManager* manager{nullptr};
+    FoodSearch* searcher{nullptr};
     QString name;
     int key;
     FoodItem* foodTotalEq{nullptr};
@@ -99,10 +100,10 @@ Day::Day(QObject *parent)
     : QObject(parent)
 {}
 
-Day::Day(int dbID, DatabaseManager *manager, bool isNew, QObject *parent)
+Day::Day(int dbID, DatabaseManager *manager, FoodSearch* searcher, bool isNew, QObject *parent)
     : QObject(parent)
 {
-    implementation.reset(new Implementation(this, manager, dbID, isNew));
+    implementation.reset(new Implementation(this, manager, searcher, dbID, isNew));
 }
 
 Day::~Day() {}

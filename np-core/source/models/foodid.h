@@ -16,6 +16,7 @@ class NPCORESHARED_EXPORT FoodID : public QObject
     Q_PROPERTY(QString ui_longDesc READ longDesc NOTIFY longDescChanged)
 
 public:
+    FoodID(QObject *parent=nullptr);
     explicit FoodID(const QString &ndbNo, const QString &shrtDesc, const QString &longDesc, QObject *parent=nullptr);
     ~FoodID();
     QString ndbNo() const;

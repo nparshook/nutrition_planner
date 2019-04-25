@@ -2,6 +2,7 @@
 #include <QDebug>
 #include <QList>
 #include <QSqlQuery>
+#include <QSqlError>
 
 using namespace np::database;
 
@@ -11,8 +12,8 @@ namespace models {
 class Meal::Implementation {
 public:
 
-    Implementation(Meal* _meal, DatabaseManager* _manager, int ID, bool isNew)
-        : meal(_meal), manager(_manager)
+    Implementation(Meal* _meal, DatabaseManager* _manager, FoodSearch* _searcher, int ID, bool isNew)
+        : meal(_meal), manager(_manager), searcher(_searcher)
     {
         name = "New meal...";
         foodID = new FoodID("0", name, name, meal);
@@ -27,6 +28,10 @@ public:
         if(!manager->hasTable("meals")) {
             QSqlQuery *createMeals = manager->createPreparedQuery("CREATE TABLE meals (id INTEGER PRIMARY KEY AUTOINCREMENT, name TEXT, day_id INTEGER)");
             createMeals->exec();
+        }
+        if(!manager->hasTable("meal_foods")) {
+            QSqlQuery *createMealFoods = manager->createPreparedQuery("CREATE TABLE meal_foods (id INTEGER PRIMARY KEY AUTOINCREMENT, ndb_no TEXT, meal_id INTEGER)");
+            createMealFoods->exec();
         }
     }
 
@@ -65,23 +70,57 @@ public:
         return true;
     }
 
+    void appendFood(FoodItem *item) {
+        QSqlQuery *saveMealFoodQuery = manager->createPreparedQuery("INSERT INTO meal_foods (ndb_no, meal_id) VALUES (:ndb_no, :id)");
+        saveMealFoodQuery->bindValue(":ndb_no", item->foodID()->ndbNo());
+        saveMealFoodQuery->bindValue(":id", key);
+        saveMealFoodQuery->exec();
+        qDebug() << "IM SURE";
+        qDebug() << saveMealFoodQuery->lastError();
+        qDebug() << saveMealFoodQuery->lastQuery();
+        qDebug() << saveMealFoodQuery->boundValues();
+        foodList.append(item);
+    }
+
+    void loadFood() {
+        QSqlQuery *getMealFoodsQuery = manager->createPreparedQuery("SELECT ndb_no FROM meal_foods WHERE meal_id=(:id)");
+        getMealFoodsQuery->bindValue(":id", key);
+        getMealFoodsQuery->exec();
+        foodList.clear();
+        qDebug() << "Getting Foods";
+        qDebug() << key;
+        qDebug() << getMealFoodsQuery->lastError();
+        while (getMealFoodsQuery->next())
+        {
+            FoodItem *item = searcher->getFoodByNdb(getMealFoodsQuery->value("ndb_no").toString());
+            foodList.append(item);
+            qDebug() << "ID";
+            qDebug() << item->foodID()->longDesc();
+        }
+        foodLoaded = true;
+    }
+
     Meal* meal{nullptr};
     DatabaseManager* manager{nullptr};
+    FoodSearch* searcher{nullptr};
     QString name;
     int key;
     FoodItem* foodTotalEq{nullptr};
     FoodItem* foodAvgEq{nullptr};
     FoodID *foodID{nullptr};
+    QList<FoodItem*> foodList{nullptr};
+    bool foodLoaded = false;
+
 };
 
 Meal::Meal(QObject *parent)
     : QObject(parent)
 {}
 
-Meal::Meal(int dbID, DatabaseManager *manager, bool isNew, QObject *parent)
+Meal::Meal(int dbID, DatabaseManager *manager, FoodSearch* searcher, bool isNew, QObject *parent)
     : QObject(parent)
 {
-    implementation.reset(new Implementation(this, manager, dbID, isNew));
+    implementation.reset(new Implementation(this, manager, searcher, dbID, isNew));
 }
 
 Meal::~Meal() {}
@@ -122,6 +161,20 @@ void Meal::setKey(int key) {
 
 int Meal::key() {
     return implementation->key;
+}
+
+void Meal::appendFood(FoodItem *item)
+{
+    implementation->appendFood(item);
+    emit foodsChanged();
+}
+
+QQmlListProperty<FoodItem> Meal::foods() {
+    if (!implementation->foodLoaded) {
+        implementation->loadFood();
+        emit foodsChanged();
+    }
+    return QQmlListProperty<FoodItem>(this, implementation->foodList);
 }
 
 }}

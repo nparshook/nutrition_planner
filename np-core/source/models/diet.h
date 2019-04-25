@@ -8,6 +8,7 @@
 
 #include "../np-core_global.h"
 #include "fooditem.h"
+#include "foodsearch.h"
 #include "day.h"
 #include "../database/databasemanager.h"
 
@@ -24,8 +25,8 @@ class NPCORESHARED_EXPORT Diet : public QObject
 
 public:
     Diet(QObject *parent = nullptr);
-    Diet(np::database::DatabaseManager *manager, QObject *parent = nullptr);
-    Diet(int dbID, np::database::DatabaseManager *manager, QObject *parent = nullptr);
+    Diet(np::database::DatabaseManager *manager, FoodSearch* searcher, QObject *parent = nullptr);
+    Diet(int dbID, np::database::DatabaseManager *manager, FoodSearch* searcher, QObject *parent = nullptr);
     ~Diet();
 
     QString name() const;

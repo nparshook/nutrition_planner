@@ -11,8 +11,8 @@ namespace models {
 class Diet::Implementation {
 public:
 
-    Implementation(Diet* _diet, DatabaseManager* _manager)
-        : diet(_diet), manager(_manager)
+    Implementation(Diet* _diet, DatabaseManager* _manager, FoodSearch* _searcher)
+        : diet(_diet), manager(_manager), searcher(_searcher)
     {
         name = "New Diet...";
         foodID = new FoodID("0", name, name, diet);
@@ -20,8 +20,8 @@ public:
     }
 
 
-    Implementation(Diet* _diet, DatabaseManager* _manager, int dbID)
-        : diet(_diet), manager(_manager)
+    Implementation(Diet* _diet, DatabaseManager* _manager, FoodSearch* _searcher, int dbID)
+        : diet(_diet), manager(_manager), searcher(_searcher)
     {
 
         name = "New Diet...";
@@ -77,20 +77,21 @@ public:
         dayList.clear();
         while (getDaysQuery->next())
         {
-            Day *day = new Day(getDaysQuery->value("id").toInt(), manager, false, diet);
+            Day *day = new Day(getDaysQuery->value("id").toInt(), manager, searcher, false, diet);
             dayList.append(day);
         }
         daysLoaded = true;
     }
 
     Day* newDay() {
-        Day* newDay = new Day(key, manager, true, diet);
+        Day* newDay = new Day(key, manager, searcher, true, diet);
         dayList.append(newDay);
         return newDay;
     }
 
     Diet* diet{nullptr};
     DatabaseManager* manager{nullptr};
+    FoodSearch* searcher{nullptr};
     QString name;
     int key;
     FoodItem* foodTotalEq{nullptr};
@@ -104,16 +105,16 @@ Diet::Diet(QObject *parent)
     : QObject(parent)
 {}
 
-Diet::Diet(DatabaseManager *manager, QObject *parent)
+Diet::Diet(DatabaseManager *manager, FoodSearch* searcher, QObject *parent)
     : QObject(parent)
 {
-    implementation.reset(new Implementation(this, manager));
+    implementation.reset(new Implementation(this, manager, searcher));
 }
 
-Diet::Diet(int dbID, DatabaseManager *manager, QObject *parent)
+Diet::Diet(int dbID, DatabaseManager *manager, FoodSearch* searcher, QObject *parent)
     : QObject(parent)
 {
-    implementation.reset(new Implementation(this, manager, dbID));
+    implementation.reset(new Implementation(this, manager, searcher, dbID));
 }
 
 Diet::~Diet() {}

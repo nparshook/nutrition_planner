@@ -17,6 +17,8 @@ public:
     QString longDesc;
 };
 
+FoodID::FoodID(QObject *parent) : QObject(parent) {}
+
 FoodID::FoodID(const QString& ndbNo, const QString& shrtDesc, const QString& longDesc, QObject *parent)
     : QObject(parent)
 {

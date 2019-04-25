@@ -19,6 +19,7 @@ public:
         : foodSearch(_foodSearch), usdaDB(_usdaDB)
     {
         foodSearchQuery = usdaDB->createPreparedQuery("SELECT ndb_no, shrt_desc, long_desc FROM food_des WHERE fdgrp_cd=:c AND shrt_desc LIKE :s;");
+        foodDesQuery = usdaDB->createPreparedQuery("SELECT ndb_no, shrt_desc, long_desc FROM food_des WHERE ndb_no=:ndb");
         foodSearchQueryAll = usdaDB->createPreparedQuery("SELECT ndb_no, shrt_desc, long_desc FROM food_des WHERE shrt_desc LIKE :s;");
         foodWeightQuery = usdaDB->createPreparedQuery("SELECT seq, amount, msre_desc, gm_wgt FROM weight WHERE ndb_no=:n;");
         foodNutrientsQuery = usdaDB->createPreparedQuery("SELECT nut_data.nutr_no, nut_data.nutr_val, nutr_def.units, nutr_def.tagname, nutr_def.nutrdesc FROM nut_data INNER JOIN nutr_def ON nut_data.nutr_no=nutr_def.nutr_no WHERE ndb_no=:n ORDER BY nutr_def.tagname;");
@@ -97,9 +98,21 @@ public:
         return foodItem;
     }
 
+    FoodItem *getFoodByNdb(const QString &ndb_no) {
+        foodDesQuery->bindValue(":ndb", ndb_no);
+        foodDesQuery->exec();
+        foodDesQuery->next();
+        FoodID* id = new FoodID(foodDesQuery->value("ndb_no").toString(),
+                                foodDesQuery->value("shrt_desc").toString(),
+                                foodDesQuery->value("long_desc").toString(),
+                                foodSearch);
+        return getFood(id);
+    }
+
     FoodSearch* foodSearch{nullptr};
     DatabaseManager* usdaDB{nullptr};
     QSqlQuery* foodSearchQuery;
+    QSqlQuery* foodDesQuery;
     QSqlQuery* foodSearchQueryAll;
     QSqlQuery* foodWeightQuery;
     QSqlQuery* foodNutrientsQuery;
@@ -128,6 +141,11 @@ QVariant FoodSearch::searchFoods(int foodGrpIdx, const QString &searchText) {
 QVariant FoodSearch::getFood(FoodID *foodID)
 {
     return QVariant::fromValue(implementation->getFood(foodID));
+}
+
+FoodItem* FoodSearch::getFoodByNdb(const QString &ndb_no)
+{
+    return implementation->getFoodByNdb(ndb_no);
 }
 }
 }
