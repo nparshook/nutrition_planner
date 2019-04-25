@@ -3,8 +3,6 @@
 #include <QList>
 #include <QDir>
 #include <QSqlQuery>
-#include "../models/nutrplan.h"
-#include "../models/diet.h"
 
 using namespace np::models;
 using namespace np::database;
@@ -23,7 +21,6 @@ public:
         qDebug() << usdaDBController->isReady();
         qDebug() << nutrPlanDBController->isReady();
         foodSearch = new FoodSearch(masterController, usdaDBController);
-        nutrPlan = new NutrPlan(masterController, nutrPlanDBController);
         loadDiets();
         qDebug() << "System Ready";
     }
@@ -40,28 +37,10 @@ public:
         }
     }
 
-    void loadDays() {
-        QSqlQuery *getDaysQuery = nutrPlanDBController->createPreparedQuery("SELECT id FROM days WHERE diet_id=(:id)");
-        getDaysQuery->bindValue(":id", currentDiet->key());
-        getDaysQuery->exec();
-        dayList.clear();
-        while (getDaysQuery->next())
-        {
-            Day *day = new Day(getDaysQuery->value("id").toInt(), nutrPlanDBController, false, masterController);
-            dayList.append(day);
-        }
-    }
-
     Diet* addDiet() {
         Diet* newDiet = new Diet(nutrPlanDBController, masterController);
         dietList.append(newDiet);
         return newDiet;
-    }
-
-    Day* addNewDay() {
-        Day* newDay = new Day(currentDiet->key(), nutrPlanDBController, true, masterController);
-        dayList.append(newDay);
-        return newDay;
     }
 
     MasterController* masterController{nullptr};
@@ -70,10 +49,8 @@ public:
     FoodSearch* foodSearch{nullptr};
     Diet* currentDiet{nullptr};
     Day* currentDay{nullptr};
-    FoodItemList* currentMeal{nullptr};
-    NutrPlan* nutrPlan{nullptr};
+    Meal* currentMeal{nullptr};
     QList<Diet*> dietList;
-    QList<Day*> dayList;
     QString welcomeMessage = "Welcome";
 };
 
@@ -109,17 +86,6 @@ void MasterController::addDiet()
     setCurrentDiet(newDiet);
 }
 
-void MasterController::addNewDayToCurrentDiet() {
-    Day* newDay = implementation->addNewDay();
-    emit daysChanged();
-    setCurrentDay(newDay);
-}
-
-QQmlListProperty<Day> MasterController::days()
-{
-    return QQmlListProperty<Day>(this, implementation->dayList);
-}
-
 Diet *MasterController::currentDiet()
 {
     return implementation->currentDiet;
@@ -128,10 +94,8 @@ Diet *MasterController::currentDiet()
 void MasterController::setCurrentDiet(np::models::Diet *diet){
     if(diet != implementation->currentDiet) {
         implementation->currentDiet = diet;
-        implementation->loadDays();
         setCurrentDay(nullptr);
         emit currentDietChanged();
-        emit daysChanged();
     }
 }
 
@@ -148,12 +112,12 @@ void MasterController::setCurrentDay(np::models::Day *day){
     }
 }
 
-FoodItemList *MasterController::currentMeal()
+Meal *MasterController::currentMeal()
 {
     return implementation->currentMeal;
 }
 
-void MasterController::setCurrentMeal(np::models::FoodItemList *meal){
+void MasterController::setCurrentMeal(np::models::Meal *meal){
     if(meal != implementation->currentMeal) {
         implementation->currentMeal = meal;
         emit currentMealChanged();

@@ -43,7 +43,7 @@ SOURCES += \
     source/models/foodsearch.cpp \
     source/models/fooditem.cpp \
     source/models/fooditemlist.cpp \
-    source/models/nutrplan.cpp \
+    source/models/meal.cpp \
     source/database/databasemanager.cpp
 
 HEADERS += \
@@ -54,11 +54,11 @@ HEADERS += \
     source/models/foodwgt.h \
     source/models/foodnutr.h \
     source/models/foodid.h \
+    source/models/meal.h \
     source/np-core_global.h \
     source/models/foodsearch.h \
     source/models/fooditem.h \
     source/models/fooditemlist.h \
-    source/models/nutrplan.h \
     source/database/databasemanager.h
 
 unix {

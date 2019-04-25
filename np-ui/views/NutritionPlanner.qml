@@ -29,7 +29,12 @@ Item {
                 Button {
                     Layout.fillWidth: true
                     text: "New Diet"
-                    onClicked: masterController.addDiet()
+                    onClicked:
+                    {
+                        masterController.addDiet()
+                        nutrContent.replace("qrc:/components/DietDisplay.qml")
+                        nutrContent.currentItem.diet = masterController.ui_currentDiet
+                    }
                 }
             }
             ListView {
@@ -95,7 +100,12 @@ Item {
                 Button {
                     Layout.fillWidth: true
                     text: "New Day"
-                    onClicked: masterController.addNewDayToCurrentDiet()
+                    onClicked: {
+                        masterController.ui_currentDay = dayPage.diet.newDay()
+                        nutrContent.replace("qrc:/components/DayDisplay.qml")
+                        nutrContent.currentItem.day = masterController.ui_currentDay
+                        dayList.model = dayPage.diet.ui_days
+                    }
                 }
             }
             ListView {
@@ -113,7 +123,7 @@ Item {
                             dayList.currentItem.highlighted = false
                         }
                         dayList.currentIndex = index
-                        masterController.ui_currentDay = masterController.ui_days[dayList.currentIndex]
+                        masterController.ui_currentDay = dayPage.diet.ui_days[dayList.currentIndex]
                         nutrContent.replace("qrc:/components/DayDisplay.qml")
                         nutrContent.currentItem.day = masterController.ui_currentDay
                         dayList.currentItem.highlighted = true
@@ -125,12 +135,15 @@ Item {
                     }
                 }
 
-                model: masterController.ui_days
+                model: []
 
                 ScrollIndicator.vertical: ScrollIndicator {}
 
                 onModelChanged: dayList.currentIndex = -1
+
+
             }
+            onDietChanged: dayList.model = dayPage.diet.ui_days
         }
 
         Page {
@@ -139,6 +152,8 @@ Item {
             enabled: mealPage.day ? true : false
             Layout.preferredHeight: grid.height / 2
             Layout.preferredWidth: grid.width / 4
+
+            onDayChanged: mealList.model = mealPage.day.ui_meals
 
             header: RowLayout {
                 Text {
@@ -150,7 +165,12 @@ Item {
                 Button {
                     Layout.fillWidth: true
                     text: "New Meal"
-                    onClicked: masterController.ui_currentDay.addSubFoodList()
+                    onClicked: {
+                        masterController.ui_currentMeal = mealPage.day.newMeal()
+                        nutrContent.replace("qrc:/components/MealDisplay.qml")
+                        nutrContent.currentItem.meal = masterController.ui_currentMeal
+                        mealList.model = mealPage.day.ui_meals
+                    }
                 }
             }
             ListView {
@@ -168,9 +188,9 @@ Item {
                             mealList.currentItem.highlighted = false
                         }
                         mealList.currentIndex = index
-                        masterController.ui_currentMeal = mealPage.day.ui_subFoodLists[mealList.currentIndex]
-                        nutrContent.replace("qrc:/components/FoodItemListDisplay.qml")
-                        nutrContent.currentItem.foodItemList = masterController.ui_currentMeal
+                        masterController.ui_currentMeal = mealPage.day.ui_meals[mealList.currentIndex]
+                        nutrContent.replace("qrc:/components/MealDisplay.qml")
+                        nutrContent.currentItem.meal = masterController.ui_currentMeal
                         nutrContent.currentItem.weight = true
                         mealList.currentItem.highlighted = true
                     }
@@ -181,7 +201,7 @@ Item {
                     }
                 }
 
-                model: mealPage.day ? mealPage.day.ui_subFoodLists : []
+                model: []
 
                 ScrollIndicator.vertical: ScrollIndicator {}
 
@@ -191,7 +211,7 @@ Item {
 
         Page {
             id: foodPage
-            property FoodItemList meal: masterController.ui_currentMeal
+            property Meal meal: masterController.ui_currentMeal
             enabled: foodPage.meal ? true : false
             Layout.preferredHeight: grid.height / 2
             Layout.preferredWidth: grid.width / 4

@@ -70,6 +70,25 @@ public:
         return true;
     }
 
+    void loadDays() {
+        QSqlQuery *getDaysQuery = manager->createPreparedQuery("SELECT id FROM days WHERE diet_id=(:id)");
+        getDaysQuery->bindValue(":id", key);
+        getDaysQuery->exec();
+        dayList.clear();
+        while (getDaysQuery->next())
+        {
+            Day *day = new Day(getDaysQuery->value("id").toInt(), manager, false, diet);
+            dayList.append(day);
+        }
+        daysLoaded = true;
+    }
+
+    Day* newDay() {
+        Day* newDay = new Day(key, manager, true, diet);
+        dayList.append(newDay);
+        return newDay;
+    }
+
     Diet* diet{nullptr};
     DatabaseManager* manager{nullptr};
     QString name;
@@ -77,6 +96,8 @@ public:
     FoodItem* foodTotalEq{nullptr};
     FoodItem* foodAvgEq{nullptr};
     FoodID *foodID{nullptr};
+    QList<Day*> dayList{nullptr};
+    bool daysLoaded = false;
 };
 
 Diet::Diet(QObject *parent)
@@ -135,4 +156,17 @@ int Diet::key() {
     return implementation->key;
 }
 
+QQmlListProperty<Day> Diet::days() {
+    if (!implementation->daysLoaded) {
+        implementation->loadDays();
+        emit daysChanged();
+    }
+    return QQmlListProperty<Day>(this, implementation->dayList);
+}
+
+QVariant Diet::newDay() {
+    Day* day = implementation->newDay();
+    emit daysChanged();
+    return QVariant::fromValue(day);
+}
 }}
