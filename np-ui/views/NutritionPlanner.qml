@@ -234,11 +234,16 @@ Item {
                         nutrContent.currentItem.forceActiveFocus()
                         nutrContent.currentItem.foodSelectionFinished.connect(nutrContent.pop)
                         nutrContent.currentItem.foodSelectionFinished.connect(reEnable)
+                        nutrContent.currentItem.foodSelectionFinished.connect(setModel)
                         nutrContent.currentItem.addFoodItem.connect(foodPage.appendFoodItem)
                         foodPage.enabled = false
                         dietPage.enabled = false
                         dayPage.enabled = false
                         mealPage.enabled = false
+                    }
+
+                    function setModel() {
+                        foodsList.model = foodPage.meal.ui_foods
                     }
 
                     function reEnable() {

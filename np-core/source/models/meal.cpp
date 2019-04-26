@@ -3,13 +3,14 @@
 #include <QList>
 #include <QSqlQuery>
 #include <QSqlError>
+#include <QHash>
 
 using namespace np::database;
 
 namespace np {
 namespace models {
 
-class Meal::Implementation {
+class Meal::Implementation{
 public:
 
     Implementation(Meal* _meal, DatabaseManager* _manager, FoodSearch* _searcher, int ID, bool isNew)
@@ -30,7 +31,7 @@ public:
             createMeals->exec();
         }
         if(!manager->hasTable("meal_foods")) {
-            QSqlQuery *createMealFoods = manager->createPreparedQuery("CREATE TABLE meal_foods (id INTEGER PRIMARY KEY AUTOINCREMENT, ndb_no TEXT, meal_id INTEGER)");
+            QSqlQuery *createMealFoods = manager->createPreparedQuery("CREATE TABLE meal_foods (id INTEGER PRIMARY KEY AUTOINCREMENT, ndb_no TEXT, meal_id INTEGER, wgt_idx INTEGER, amt FLOAT)");
             createMealFoods->exec();
         }
     }
@@ -61,6 +62,14 @@ public:
         saveMealQuery->exec();
     }
 
+    void saveFood(FoodItem* item) {
+        QSqlQuery *saveFoodQuery = manager->createPreparedQuery("UPDATE meal_foods SET wgt_idx = (:idx), amt = (:amt) WHERE id = (:id)");
+        saveFoodQuery->bindValue(":idx", item->weightIdx());
+        saveFoodQuery->bindValue(":amt", item->amount());
+        saveFoodQuery->bindValue(":id", foodTable[item]);
+        saveFoodQuery->exec();
+    }
+
     bool setName(const QString &_name) {
         if(name == _name) return false;
         name = _name;
@@ -71,33 +80,38 @@ public:
     }
 
     void appendFood(FoodItem *item) {
-        QSqlQuery *saveMealFoodQuery = manager->createPreparedQuery("INSERT INTO meal_foods (ndb_no, meal_id) VALUES (:ndb_no, :id)");
+        QSqlQuery *saveMealFoodQuery = manager->createPreparedQuery("INSERT INTO meal_foods (ndb_no, meal_id, wgt_idx, amt) VALUES (:ndb_no, :id, :idx, :amt)");
         saveMealFoodQuery->bindValue(":ndb_no", item->foodID()->ndbNo());
         saveMealFoodQuery->bindValue(":id", key);
+        saveMealFoodQuery->bindValue(":idx", item->weightIdx());
+        saveMealFoodQuery->bindValue(":amt", item->amount());
         saveMealFoodQuery->exec();
-        qDebug() << "IM SURE";
-        qDebug() << saveMealFoodQuery->lastError();
-        qDebug() << saveMealFoodQuery->lastQuery();
-        qDebug() << saveMealFoodQuery->boundValues();
+        foodTable[item] = saveMealFoodQuery->lastInsertId().toInt();
         foodList.append(item);
+        connectFood(item);
     }
 
     void loadFood() {
-        QSqlQuery *getMealFoodsQuery = manager->createPreparedQuery("SELECT ndb_no FROM meal_foods WHERE meal_id=(:id)");
+        QSqlQuery *getMealFoodsQuery = manager->createPreparedQuery("SELECT id, ndb_no, wgt_idx, amt FROM meal_foods WHERE meal_id=(:id)");
         getMealFoodsQuery->bindValue(":id", key);
         getMealFoodsQuery->exec();
+        foodTable.clear();
         foodList.clear();
-        qDebug() << "Getting Foods";
-        qDebug() << key;
-        qDebug() << getMealFoodsQuery->lastError();
         while (getMealFoodsQuery->next())
         {
             FoodItem *item = searcher->getFoodByNdb(getMealFoodsQuery->value("ndb_no").toString());
+            item->setAmount(getMealFoodsQuery->value("amt").toFloat());
+            item->setWeightIdx(getMealFoodsQuery->value("wgt_idx").toInt());
+            foodTable[item] = getMealFoodsQuery->value("id").toInt();
             foodList.append(item);
-            qDebug() << "ID";
-            qDebug() << item->foodID()->longDesc();
+            connectFood(item);
         }
         foodLoaded = true;
+    }
+
+    void connectFood(FoodItem* item) {
+        QObject::connect(item, &FoodItem::amountChanged, meal, [=](){saveFood(item);});
+        QObject::connect(item, &FoodItem::weightIdxChanged, meal, [=](){saveFood(item);});
     }
 
     Meal* meal{nullptr};
@@ -108,9 +122,9 @@ public:
     FoodItem* foodTotalEq{nullptr};
     FoodItem* foodAvgEq{nullptr};
     FoodID *foodID{nullptr};
-    QList<FoodItem*> foodList{nullptr};
     bool foodLoaded = false;
-
+    QList<FoodItem*> foodList;
+    QHash<FoodItem*, int> foodTable;
 };
 
 Meal::Meal(QObject *parent)
