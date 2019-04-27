@@ -53,6 +53,7 @@ public:
         createMealQuery->bindValue(":id", dayID);
         createMealQuery->exec();
         key = createMealQuery->lastInsertId().toInt();
+        createFoodEqs();
     }
 
     void save() {
@@ -89,6 +90,7 @@ public:
         foodTable[item] = saveMealFoodQuery->lastInsertId().toInt();
         foodList.append(item);
         connectFood(item);
+        createFoodEqs();
     }
 
     void loadFood() {
@@ -107,11 +109,81 @@ public:
             connectFood(item);
         }
         foodLoaded = true;
+        createFoodEqs();
     }
 
     void connectFood(FoodItem* item) {
-        QObject::connect(item, &FoodItem::amountChanged, meal, [=](){saveFood(item);});
-        QObject::connect(item, &FoodItem::weightIdxChanged, meal, [=](){saveFood(item);});
+        QObject::connect(item, &FoodItem::amountChanged, meal, [=](){saveFood(item); createFoodEqs();});
+        QObject::connect(item, &FoodItem::weightIdxChanged, meal, [=](){saveFood(item); createFoodEqs();});
+    }
+
+    void createFoodEqs()
+    {
+        QHash<int, FoodNutr *> nutrsTable;
+
+        float gmWgt = 0;
+
+        for(int i = 0; i < foodList.size(); i++) {
+            QList<FoodNutr *> nutrs = foodList[i]->nutrients();
+            float scaleFactor = foodList[i]->scaleFactor();
+            float amount = foodList[i]->amount();
+            gmWgt += scaleFactor * amount;
+            for(int j = 0; j < nutrs.size(); j++) {
+                FoodNutr *nutr = nutrs[j];
+                if(!nutrsTable.contains(nutr->nutrNo()))
+                {
+                   nutrsTable[nutr->nutrNo()] = new FoodNutr(nutr->nutrNo(),
+                                                             nutr->nutrVal() * scaleFactor * amount / 100, nutr->nutrDesc(),
+                                                             nutr->tagName(),
+                                                             nutr->units());
+                } else {
+                    nutrsTable[nutr->nutrNo()]->setNutrVal(nutr->nutrVal() * scaleFactor * amount / 100 + nutrsTable[nutr->nutrNo()]->nutrVal());
+                }
+            }
+        }
+
+        //if(!amountSet) amount = gmWgt;
+        FoodItem* totalItem = new FoodItem(meal);
+        FoodItem* avgItem = new FoodItem(meal);
+        totalItem->setFoodID(foodID);
+        avgItem->setFoodID(foodID);
+        //totalItem->setScaleFactor(amount / gmWgt);
+        //avgItem->setScaleFactor(amount / gmWgt);
+        QHashIterator<int, FoodNutr *> h(nutrsTable);
+        while (h.hasNext()) {
+            h.next();
+            FoodNutr *nutr = h.value();
+            totalItem->appendNutrient(nutr);
+            avgItem->appendNutrient(new FoodNutr(nutr->nutrNo(),
+                                                 nutr->nutrVal() / foodList.size(),
+                                                 nutr->nutrDesc(),
+                                                 nutr->tagName(),
+                                                 nutr->units()));
+        }
+
+        foodTotalEq = totalItem;
+        foodAvgEq = avgItem;
+        meal->foodEqChanged();
+    }
+
+    void removeFood(FoodItem* item) {
+        int id = foodTable.value(item);
+        QSqlQuery *delMealFoodQuery = manager->createPreparedQuery("DELETE FROM meal_foods WHERE id=(:id)");
+        delMealFoodQuery->bindValue(":id", id);
+        delMealFoodQuery->exec();
+        foodList.removeOne(item);
+        foodTable.remove(item);
+        createFoodEqs();
+    }
+
+    void remove() {
+        QHashIterator<FoodItem*, int> h(foodTable);
+        while (h.hasNext()) {
+            removeFood(h.key());
+        }
+        QSqlQuery *delMealQuery = manager->createPreparedQuery("DELETE FROM meals WHERE id=(:id)");
+        delMealQuery->bindValue(":id", key);
+        delMealQuery->exec();
     }
 
     Meal* meal{nullptr};
@@ -191,4 +263,18 @@ QQmlListProperty<FoodItem> Meal::foods() {
     return QQmlListProperty<FoodItem>(this, implementation->foodList);
 }
 
+void Meal::load()
+{
+    implementation->loadFood();
+}
+
+void Meal::removeFood(FoodItem *item)
+{
+    implementation->removeFood(item);
+    emit foodsChanged();
+}
+
+void Meal::remove() {
+    implementation->remove();
+}
 }}

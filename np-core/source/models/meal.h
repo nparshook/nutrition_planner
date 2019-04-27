@@ -38,7 +38,9 @@ public:
 
     QQmlListProperty<np::models::FoodItem> foods();
     Q_INVOKABLE void appendFood(FoodItem* item);
-
+    Q_INVOKABLE void removeFood(FoodItem* item);
+    void remove();
+    void load();
 signals:
     void nameChanged();
     void foodsChanged();

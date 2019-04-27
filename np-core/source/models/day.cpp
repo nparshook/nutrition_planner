@@ -41,12 +41,15 @@ public:
     }
 
     void create(int dietID) {
+        qDebug() << "New Day";
         init();
         QSqlQuery *createDayQuery = manager->createPreparedQuery("INSERT INTO days (name, diet_id) VALUES (:name, :id)");
         createDayQuery->bindValue(":name", name);
         createDayQuery->bindValue(":id", dietID);
         createDayQuery->exec();
         key = createDayQuery->lastInsertId().toInt();
+        createFoodEqs();
+        qDebug() << "Created";
     }
 
     void save() {
@@ -74,14 +77,80 @@ public:
         {
             Meal *meal = new Meal(getDaysQuery->value("id").toInt(), manager, searcher, false, day);
             mealList.append(meal);
+            connectMeal(meal);
+            meal->load();
         }
         mealsLoaded = true;
+        createFoodEqs();
     }
 
     Meal* newMeal() {
         Meal* newMeal = new Meal(key, manager, searcher, true, day);
+        qDebug() << "Meal Made";
         mealList.append(newMeal);
+        connectMeal(newMeal);
+        createFoodEqs();
+        qDebug() << "Meal Added";
         return newMeal;
+    }
+
+    void connectMeal(Meal* meal) {
+        QObject::connect(meal, &Meal::foodEqChanged, day, [=](){createFoodEqs();});
+        QObject::connect(meal, &Meal::foodAvgChanged, day, [=](){createFoodEqs();});
+    }
+
+    void createFoodEqs()
+    {
+        QHash<int, FoodNutr *> nutrsTable;
+
+        float gmWgt = 0;
+        qDebug() << mealList.size();
+        for(int i = 0; i < mealList.size(); i++) {
+            FoodItem* item = mealList[i]->foodTotalEq();
+            QList<FoodNutr *> nutrs = item->nutrients();
+            float scaleFactor = item->scaleFactor();
+            float amount = item->amount();
+            gmWgt += scaleFactor * amount;
+            for(int j = 0; j < nutrs.size(); j++) {
+                FoodNutr *nutr = nutrs[j];
+                if(!nutrsTable.contains(nutr->nutrNo()))
+                {
+                   nutrsTable[nutr->nutrNo()] = new FoodNutr(nutr->nutrNo(),
+                                                             nutr->nutrVal() * scaleFactor * amount / 100, nutr->nutrDesc(),
+                                                             nutr->tagName(),
+                                                             nutr->units());
+                } else {
+                    nutrsTable[nutr->nutrNo()]->setNutrVal(nutr->nutrVal() * scaleFactor * amount / 100 + nutrsTable[nutr->nutrNo()]->nutrVal());
+                }
+            }
+        }
+        qDebug() << "Meals Summed";
+        FoodItem* totalItem = new FoodItem(day);
+        FoodItem* avgItem = new FoodItem(day);
+        totalItem->setFoodID(foodID);
+        avgItem->setFoodID(foodID);
+        QHashIterator<int, FoodNutr *> h(nutrsTable);
+        while (h.hasNext()) {
+            h.next();
+            FoodNutr *nutr = h.value();
+            totalItem->appendNutrient(nutr);
+            avgItem->appendNutrient(new FoodNutr(nutr->nutrNo(),
+                                                 nutr->nutrVal() / mealList.size(),
+                                                 nutr->nutrDesc(),
+                                                 nutr->tagName(),
+                                                 nutr->units()));
+        }
+
+        foodTotalEq = totalItem;
+        foodAvgEq = avgItem;
+        day->foodEqChanged();
+        day->foodAvgChanged();
+    }
+
+    void removeMeal(Meal* meal) {
+        mealList.removeOne(meal);
+        meal->remove();
+        createFoodEqs();
     }
 
     Day* day{nullptr};
@@ -92,7 +161,7 @@ public:
     FoodItem* foodTotalEq{nullptr};
     FoodItem* foodAvgEq{nullptr};
     FoodID *foodID{nullptr};
-    QList<Meal*> mealList{nullptr};
+    QList<Meal*> mealList;
     bool mealsLoaded = false;
 };
 
@@ -160,4 +229,12 @@ QVariant Day::newMeal() {
     return QVariant::fromValue(meal);
 }
 
+void Day::load()
+{
+    implementation->loadMeals();
+}
+
+void Day::removeMeal(Meal *meal) {
+    implementation->removeMeal(meal);
+}
 }}

@@ -39,7 +39,9 @@ public:
 
     QQmlListProperty<np::models::Meal> meals();
     Q_INVOKABLE QVariant newMeal();
+    Q_INVOKABLE void removeMeal(Meal* meal);
 
+    void load();
 signals:
     void nameChanged();
     void mealsChanged();

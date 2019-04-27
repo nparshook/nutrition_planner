@@ -36,6 +36,15 @@ Item {
                         nutrContent.currentItem.diet = masterController.ui_currentDiet
                     }
                 }
+                Button {
+                    Layout.fillWidth: true
+                    text: "Delete Selected Diet"
+                    enabled: dietList.currentItem ? true : false
+                    onClicked:
+                    {
+                        console.log('Delete Diet')
+                    }
+                }
             }
             ListView {
                 id: dietList
@@ -107,6 +116,15 @@ Item {
                         dayList.model = dayPage.diet.ui_days
                     }
                 }
+                Button {
+                    Layout.fillWidth: true
+                    text: "Delete Selected Day"
+                    //enabled: dayList.currentItem ? true : false
+                    onClicked:
+                    {
+                        console.log('Delete Day')
+                    }
+                }
             }
             ListView {
                 id: dayList
@@ -169,6 +187,16 @@ Item {
                         masterController.ui_currentMeal = mealPage.day.newMeal()
                         nutrContent.replace("qrc:/components/MealDisplay.qml")
                         nutrContent.currentItem.meal = masterController.ui_currentMeal
+                        mealList.model = mealPage.day.ui_meals
+                    }
+                }
+                Button {
+                    Layout.fillWidth: true
+                    text: "Delete Selected Meal"
+                    enabled: mealList.currentItem ? true : false
+                    onClicked:
+                    {
+                        mealPage.day.removeMeal(mealPage.day.ui_meals[mealList.currentIndex])
                         mealList.model = mealPage.day.ui_meals
                     }
                 }
@@ -251,6 +279,16 @@ Item {
                         dietPage.enabled = true
                         dayPage.enabled = true
                         mealPage.enabled = true
+                    }
+                }
+                Button {
+                    Layout.fillWidth: true
+                    text: "Delete Selected Food"
+                    enabled: foodsList.currentItem ? true : false
+                    onClicked:
+                    {
+                        foodPage.meal.removeFood(foodPage.meal.ui_foods[foodsList.currentIndex])
+                        foodsList.model = foodPage.meal.ui_foods
                     }
                 }
             }

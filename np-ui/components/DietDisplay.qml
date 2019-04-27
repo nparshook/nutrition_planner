@@ -23,7 +23,6 @@ Item {
             text: diet ? diet.ui_name : ''
             onTextChanged: diet.ui_name = text
         }
-
         FoodItemDisplay {
             Layout.fillHeight: true
             Layout.fillWidth: true

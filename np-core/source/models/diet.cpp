@@ -79,14 +79,70 @@ public:
         {
             Day *day = new Day(getDaysQuery->value("id").toInt(), manager, searcher, false, diet);
             dayList.append(day);
+            connectDay(day);
+            day->load();
         }
         daysLoaded = true;
+        createFoodEqs();
     }
 
     Day* newDay() {
         Day* newDay = new Day(key, manager, searcher, true, diet);
         dayList.append(newDay);
+        connectDay(newDay);
+        createFoodEqs();
         return newDay;
+    }
+
+    void connectDay(Day* day) {
+        QObject::connect(day, &Day::foodEqChanged, diet, [=](){createFoodEqs();});
+        QObject::connect(day, &Day::foodAvgChanged, diet, [=](){createFoodEqs();});
+    }
+
+    void createFoodEqs()
+    {
+        QHash<int, FoodNutr *> nutrsTable;
+
+        float gmWgt = 0;
+
+        for(int i = 0; i < dayList.size(); i++) {
+            FoodItem* item = dayList[i]->foodTotalEq();
+            QList<FoodNutr *> nutrs = item->nutrients();
+            float scaleFactor = item->scaleFactor();
+            float amount = item->amount();
+            gmWgt += scaleFactor * amount;
+            for(int j = 0; j < nutrs.size(); j++) {
+                FoodNutr *nutr = nutrs[j];
+                if(!nutrsTable.contains(nutr->nutrNo()))
+                {
+                   nutrsTable[nutr->nutrNo()] = new FoodNutr(nutr->nutrNo(),
+                                                             nutr->nutrVal() * scaleFactor * amount / 100, nutr->nutrDesc(),
+                                                             nutr->tagName(),
+                                                             nutr->units());
+                } else {
+                    nutrsTable[nutr->nutrNo()]->setNutrVal(nutr->nutrVal() * scaleFactor * amount / 100 + nutrsTable[nutr->nutrNo()]->nutrVal());
+                }
+            }
+        }
+
+        FoodItem* totalItem = new FoodItem(diet);
+        FoodItem* avgItem = new FoodItem(diet);
+        totalItem->setFoodID(foodID);
+        avgItem->setFoodID(foodID);
+        QHashIterator<int, FoodNutr *> h(nutrsTable);
+        while (h.hasNext()) {
+            h.next();
+            FoodNutr *nutr = h.value();
+            totalItem->appendNutrient(nutr);
+            avgItem->appendNutrient(new FoodNutr(nutr->nutrNo(),
+                                                 nutr->nutrVal() / dayList.size(),
+                                                 nutr->nutrDesc(),
+                                                 nutr->tagName(),
+                                                 nutr->units()));
+        }
+
+        foodTotalEq = totalItem;
+        foodAvgEq = avgItem;
     }
 
     Diet* diet{nullptr};
