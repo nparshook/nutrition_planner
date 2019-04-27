@@ -40,6 +40,8 @@ public:
 
     QQmlListProperty<np::models::Day> days();
     Q_INVOKABLE QVariant newDay();
+    Q_INVOKABLE void removeDay(Day* day);
+    Q_INVOKABLE void remove();
 
 signals:
     void nameChanged();

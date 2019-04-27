@@ -35,12 +35,16 @@ public:
     QQmlListProperty<np::models::Diet> diets();
     QQmlListProperty<np::models::Day> days();
     Q_INVOKABLE void addDiet();
+    Q_INVOKABLE void removeCurrentDiet();
     np::models::Diet* currentDiet();
     void setCurrentDiet(np::models::Diet* diet);
     np::models::Day* currentDay();
     void setCurrentDay(np::models::Day* day);
     np::models::Meal* currentMeal();
     void setCurrentMeal(np::models::Meal* meal);
+
+    Q_INVOKABLE void clearCurrentDay();
+    Q_INVOKABLE void clearCurrentMeal();
 
 signals:
     void dietsChanged();

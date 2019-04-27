@@ -42,7 +42,10 @@ Item {
                     enabled: dietList.currentItem ? true : false
                     onClicked:
                     {
-                        console.log('Delete Diet')
+                        masterController.removeCurrentDiet()
+                        //dietList.model = masterController.ui_diets
+                        dayPage.clearModel()
+                        nutrContent.clear()
                     }
                 }
             }
@@ -99,6 +102,11 @@ Item {
             Layout.preferredHeight: grid.height / 2
             Layout.preferredWidth: grid.width / 4
 
+            function clearModel() {
+                dayList.model = []
+                mealPage.clearModel()
+            }
+
             header: RowLayout {
                 Text {
                     Layout.fillWidth: true
@@ -119,10 +127,13 @@ Item {
                 Button {
                     Layout.fillWidth: true
                     text: "Delete Selected Day"
-                    //enabled: dayList.currentItem ? true : false
+                    enabled: dayList.currentItem ? true : false
                     onClicked:
                     {
-                        console.log('Delete Day')
+                        dayPage.diet.removeDay(dayPage.diet.ui_days[dayList.currentIndex])
+                        dayList.model = dayPage.diet.ui_days
+                        mealPage.clearModel()
+                        masterController.clearCurrentDay()
                     }
                 }
             }
@@ -161,7 +172,7 @@ Item {
 
 
             }
-            onDietChanged: dayList.model = dayPage.diet.ui_days
+            onDietChanged: if(dayPage.diet) {dayList.model = dayPage.diet.ui_days} else {dayList.model = []}
         }
 
         Page {
@@ -171,7 +182,12 @@ Item {
             Layout.preferredHeight: grid.height / 2
             Layout.preferredWidth: grid.width / 4
 
-            onDayChanged: mealList.model = mealPage.day.ui_meals
+            function clearModel() {
+                mealList.model = []
+                foodPage.clearModel()
+            }
+
+            onDayChanged: if(mealPage.day) {mealList.model = mealPage.day.ui_meals} else {mealList.model = []}
 
             header: RowLayout {
                 Text {
@@ -198,6 +214,8 @@ Item {
                     {
                         mealPage.day.removeMeal(mealPage.day.ui_meals[mealList.currentIndex])
                         mealList.model = mealPage.day.ui_meals
+                        foodPage.clearModel()
+                        masterController.clearCurrentMeal()
                     }
                 }
             }
@@ -244,7 +262,11 @@ Item {
             Layout.preferredHeight: grid.height / 2
             Layout.preferredWidth: grid.width / 4
 
-            onMealChanged: foodsList.model = meal.ui_foods
+            onMealChanged: if(foodPage.meal) {foodsList.model = meal.ui_foods} else {foodsList.model = []}
+
+            function clearModel() {
+                foodsList.model = []
+            }
 
             header: RowLayout {
                 Text {

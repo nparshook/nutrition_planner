@@ -153,6 +153,16 @@ public:
         createFoodEqs();
     }
 
+    void remove() {
+        for(int i = 0; i < mealList.count(); i++) {
+            mealList[i]->remove();
+        }
+        mealList.clear();
+        QSqlQuery *delDayQuery = manager->createPreparedQuery("DELETE FROM days WHERE id=(:id)");
+        delDayQuery->bindValue(":id", key);
+        delDayQuery->exec();
+    }
+
     Day* day{nullptr};
     DatabaseManager* manager{nullptr};
     FoodSearch* searcher{nullptr};
@@ -236,5 +246,9 @@ void Day::load()
 
 void Day::removeMeal(Meal *meal) {
     implementation->removeMeal(meal);
+}
+
+void Day::remove() {
+    implementation->remove();
 }
 }}

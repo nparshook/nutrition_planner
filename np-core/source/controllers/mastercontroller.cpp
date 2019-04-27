@@ -43,6 +43,12 @@ public:
         return newDiet;
     }
 
+    void removeDiet() {
+        dietList.removeOne(currentDiet);
+        currentDiet->remove();
+
+    }
+
     MasterController* masterController{nullptr};
     DatabaseManager* usdaDBController{nullptr};
     DatabaseManager* nutrPlanDBController{nullptr};
@@ -122,5 +128,20 @@ void MasterController::setCurrentMeal(np::models::Meal *meal){
         implementation->currentMeal = meal;
         emit currentMealChanged();
     }
+}
+
+void MasterController::removeCurrentDiet()
+{
+    implementation->removeDiet();
+    setCurrentDiet(nullptr);
+    emit dietsChanged();
+}
+
+void MasterController::clearCurrentDay() {
+    setCurrentDay(nullptr);
+}
+
+void MasterController::clearCurrentMeal() {
+    setCurrentMeal(nullptr);
 }
 }}

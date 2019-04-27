@@ -168,19 +168,26 @@ public:
 
     void removeFood(FoodItem* item) {
         int id = foodTable.value(item);
+        foodList.removeOne(item);
+        foodTable.remove(item);
+        deleteFood(id);
+        createFoodEqs();
+    }
+
+    void deleteFood(int id) {
         QSqlQuery *delMealFoodQuery = manager->createPreparedQuery("DELETE FROM meal_foods WHERE id=(:id)");
         delMealFoodQuery->bindValue(":id", id);
         delMealFoodQuery->exec();
-        foodList.removeOne(item);
-        foodTable.remove(item);
-        createFoodEqs();
     }
 
     void remove() {
         QHashIterator<FoodItem*, int> h(foodTable);
         while (h.hasNext()) {
-            removeFood(h.key());
+            h.next();
+            deleteFood(h.value());
         }
+        foodList.clear();
+        foodTable.clear();
         QSqlQuery *delMealQuery = manager->createPreparedQuery("DELETE FROM meals WHERE id=(:id)");
         delMealQuery->bindValue(":id", key);
         delMealQuery->exec();

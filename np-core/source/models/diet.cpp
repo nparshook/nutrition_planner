@@ -145,6 +145,22 @@ public:
         foodAvgEq = avgItem;
     }
 
+    void removeDay(Day* day) {
+        dayList.removeOne(day);
+        day->remove();
+        createFoodEqs();
+    }
+
+    void remove() {
+        for(int i = 0; i < dayList.count(); i++) {
+            dayList[i]->remove();
+        }
+        dayList.clear();
+        QSqlQuery *delDietQuery = manager->createPreparedQuery("DELETE FROM diets WHERE id=(:id)");
+        delDietQuery->bindValue(":id", key);
+        delDietQuery->exec();
+    }
+
     Diet* diet{nullptr};
     DatabaseManager* manager{nullptr};
     FoodSearch* searcher{nullptr};
@@ -225,5 +241,14 @@ QVariant Diet::newDay() {
     Day* day = implementation->newDay();
     emit daysChanged();
     return QVariant::fromValue(day);
+}
+
+void Diet::removeDay(Day *day)
+{
+    implementation->removeDay(day);
+}
+
+void Diet::remove() {
+    implementation->remove();
 }
 }}
