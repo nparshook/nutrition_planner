@@ -24,6 +24,10 @@ public:
     FoodNutr* carbs{nullptr};
     QList<FoodWgt *>weights;
     QList<FoodNutr *> nutrients;
+    QList<FoodNutr *> summary_nutrs;
+    QList<FoodNutr *> vitamins;
+    QList<FoodNutr *> minerals;
+    QList<FoodNutr *> fattyacids;
     int weightIdx;
     float amount;
     float scaleFactor;
@@ -86,26 +90,24 @@ void FoodItem::appendNutrient(FoodNutr *nutrient)
     case 205:
         implementation->carbs = nutrient;
         break;
-    /*case 208: m_cals = nutrient;
+    case 208: break;
+    case 601: implementation->summary_nutrs.append(nutrient);
+        //emit summaryNutrsChanged();
         break;
-    case 601: m_nutrSummary.append(nutrient);
-        emit nutrSummaryChanged();
-        break;*/
     default:
-        break;
-        /*if(nutrNo <= 291) {
-            m_nutrSummary.append(nutrient);
-            emit nutrSummaryChanged();
+        if(nutrNo <= 291) {
+            implementation->summary_nutrs.append(nutrient);
+            //emit summaryNutrsChanged();
         } else if (nutrNo <= 317) {
-            m_minerals.append(nutrient);
-            emit mineralsChanged();
+            implementation->minerals.append(nutrient);
+            //emit mineralsChanged();
         } else if (nutrNo <= 578) {
-            m_vitamins.append(nutrient);
-            emit vitaminsChanged();
+            implementation->vitamins.append(nutrient);
+            //emit vitaminsChanged();
         } else {
-            m_fattyAcids.append(nutrient);
-            emit fattyAcidsChanged();
-        }*/
+            implementation->fattyacids.append(nutrient);
+            //emit fattyAcidsChanged();
+        }
     }
 }
 
@@ -151,5 +153,25 @@ void FoodItem::setScaleFactor(float scaleFactor)
         implementation->scaleFactor = scaleFactor;
         emit scaleFactorChanged();
     }
+}
+
+QQmlListProperty<FoodNutr> FoodItem::summaryNutrs()
+{
+    return QQmlListProperty<FoodNutr>(this, implementation->summary_nutrs);
+}
+
+QQmlListProperty<FoodNutr> FoodItem::minerals()
+{
+    return QQmlListProperty<FoodNutr>(this, implementation->minerals);
+}
+
+QQmlListProperty<FoodNutr> FoodItem::vitamins()
+{
+    return QQmlListProperty<FoodNutr>(this, implementation->vitamins);
+}
+
+QQmlListProperty<FoodNutr> FoodItem::fattyAcids()
+{
+    return QQmlListProperty<FoodNutr>(this, implementation->fattyacids);
 }
 }}

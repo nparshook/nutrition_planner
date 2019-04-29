@@ -22,6 +22,10 @@ class NPCORESHARED_EXPORT FoodItem : public QObject
     Q_PROPERTY(np::models::FoodNutr* ui_fat READ fat CONSTANT)
     Q_PROPERTY(np::models::FoodNutr* ui_carbs READ carbs CONSTANT)
     Q_PROPERTY(QQmlListProperty<np::models::FoodWgt> ui_weights READ weights CONSTANT)
+    Q_PROPERTY(QQmlListProperty<np::models::FoodNutr> ui_summaryNutrs READ summaryNutrs CONSTANT)
+    Q_PROPERTY(QQmlListProperty<np::models::FoodNutr> ui_minerals READ minerals CONSTANT)
+    Q_PROPERTY(QQmlListProperty<np::models::FoodNutr> ui_vitamins READ vitamins CONSTANT)
+    Q_PROPERTY(QQmlListProperty<np::models::FoodNutr> ui_fattyAcids READ fattyAcids CONSTANT)
     Q_PROPERTY(float ui_scaleFactor READ scaleFactor NOTIFY scaleFactorChanged)
     Q_PROPERTY(int ui_weightIdx READ weightIdx WRITE setWeightIdx NOTIFY weightIdxChanged)
     Q_PROPERTY(float ui_amount READ amount WRITE setAmount NOTIFY amountChanged)
@@ -38,6 +42,10 @@ public:
     FoodNutr *carbs() const;
     QList<FoodNutr*> nutrients();
     QQmlListProperty<FoodWgt> weights();
+    QQmlListProperty<FoodNutr> summaryNutrs();
+    QQmlListProperty<FoodNutr> minerals();
+    QQmlListProperty<FoodNutr> vitamins();
+    QQmlListProperty<FoodNutr> fattyAcids();
     int weightIdx() const;
     void setWeightIdx(int idx);
     float amount() const;
@@ -49,7 +57,10 @@ signals:
     void weightIdxChanged();
     void amountChanged();
     void scaleFactorChanged();
-
+    /*void summaryNutrsChanged();
+    void mineralsChanged();
+    void vitaminsChanged();
+    void fattyAcidsChanged();*/
 private:
     class Implementation;
     QScopedPointer<Implementation> implementation;
