@@ -101,7 +101,7 @@ void FoodItem::appendNutrient(FoodNutr *nutrient)
         } else if (nutrNo <= 317) {
             implementation->minerals.append(nutrient);
             //emit mineralsChanged();
-        } else if (nutrNo <= 578) {
+        } else if ((nutrNo > 570 && nutrNo < 578) || (nutrNo > 400 && nutrNo <= 435) || (nutrNo >317 && nutrNo <= 328)) {
             implementation->vitamins.append(nutrient);
             //emit vitaminsChanged();
         } else {

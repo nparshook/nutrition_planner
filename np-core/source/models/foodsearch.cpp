@@ -91,7 +91,8 @@ public:
                                                   foodNutrientsQuery->value("nutr_val").toFloat(),
                                                   foodNutrientsQuery->value("nutrdesc").toString(),
                                                   foodNutrientsQuery->value("tagname").toString(),
-                                                  foodNutrientsQuery->value("units").toString()));
+                                                  foodNutrientsQuery->value("units").toString(),
+                                                  foodItem));
         }
         qDebug() << foodNutrientsQuery->lastError();
         qDebug() << foodItem->foodID()->longDesc();

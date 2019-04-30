@@ -19,6 +19,8 @@ public:
     QString units;
 };
 
+FoodNutr::FoodNutr(QObject *parent) : QObject(parent) {}
+
 FoodNutr::FoodNutr(int nutrNo, float nutrVal, const QString &nutrDesc, const QString &tagName, const QString &units, QObject *parent)
     : QObject(parent)
 {

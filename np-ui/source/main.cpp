@@ -6,6 +6,7 @@
 #include <models/foodgrp.h>
 #include <models/foodsearch.h>
 #include <models/foodwgt.h>
+#include <models/foodnutr.h>
 #include <models/fooditem.h>
 #include <models/fooditemlist.h>
 #include <models/diet.h>
@@ -22,7 +23,8 @@ int main(int argc, char *argv[])
 
     qmlRegisterType<np::models::FoodWgt>("NP", 1, 0, "FoodWgt");
     qmlRegisterType<np::models::FoodGrp>("NP", 1, 0, "FoodGrp");
-    qmlRegisterType<np::models::FoodID>("NP", 1, 0, "FoodID");
+    qmlRegisterType<np::models::FoodNutr>("NP", 1, 0, "FoodID");
+    qmlRegisterType<np::models::FoodID>("NP", 1, 0, "FoodNutr");
     qmlRegisterType<np::models::FoodItem>("NP", 1, 0, "FoodItem");
     qmlRegisterType<np::models::FoodItemList>("NP", 1, 0, "FoodItemList");
     qmlRegisterType<np::models::FoodSearch>("NP", 1, 0, "FoodSearch");

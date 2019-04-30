@@ -22,6 +22,8 @@ Item {
         return 0
     }
 
+    onFoodItemChanged: if(root.foodItem) {vitaminList.model = foodItem.ui_vitamins;mineralList.model = foodItem.ui_minerals} else {vitaminList.model = []; mineralList.model = []}
+
     Layout.alignment: Qt.AlignHCenter
     ColumnLayout {
         anchors.fill: parent
@@ -123,9 +125,39 @@ Item {
             font.pointSize: 28
             text: if(foodItem && foodItem.ui_fat) {foodItem.ui_fat.ui_nutrDesc + ' ' + root.scaleNutr(foodItem.ui_fat.ui_nutrVal)} else {''}
         }
-        Item {
-            id: filler
-            Layout.fillHeight: true
+        RowLayout {
+            ListView {
+                id: vitaminList
+                Layout.fillWidth: true
+                Layout.fillHeight: true
+                Layout.alignment: Qt.AlignTop
+                delegate: ItemDelegate {
+                    width: parent.width
+                    text: model.ui_nutrDesc + " " + model.ui_nutrVal + model.ui_units
+                }
+
+                model: []
+
+                ScrollIndicator.vertical: ScrollIndicator {}
+
+                onModelChanged: vitaminList.currentIndex = -1
+            }
+            ListView {
+                id: mineralList
+                Layout.fillWidth: true
+                Layout.fillHeight: true
+                Layout.alignment: Qt.AlignTop
+                delegate: ItemDelegate {
+                    width: parent.width
+                    text: model.ui_nutrDesc + " " + model.ui_nutrVal + model.ui_units
+                }
+
+                model: []
+
+                ScrollIndicator.vertical: ScrollIndicator {}
+
+                onModelChanged: mineralList.currentIndex = -1
+            }
         }
     }
 }
