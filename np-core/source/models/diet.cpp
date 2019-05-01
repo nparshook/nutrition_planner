@@ -120,7 +120,7 @@ public:
                 FoodNutr *nutr = nutrs[j];
                 if(!nutrsTable.contains(nutr->nutrNo()))
                 {
-                    if(nutrReqsTable.contains(nutr->nutrNo())){
+                    if(nutrReqsTable.contains(nutr->nutrNo()) || (nutr->nutrNo() >= 203 && nutr->nutrNo() <= 205) ){
                         nutrsTable[nutr->nutrNo()] = new FoodNutr(nutr->nutrNo(),
                                                                  nutr->nutrVal() * scaleFactor * amount / 100, nutr->nutrDesc(),
                                                                  nutr->tagName(),

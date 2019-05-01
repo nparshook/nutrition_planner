@@ -132,10 +132,19 @@ Item {
                 Layout.fillWidth: true
                 Layout.fillHeight: true
                 Layout.alignment: Qt.AlignTop
-                delegate: ItemDelegate {
-                    visible: diet.getNutrReq(model.ui_nutrNo) >= 0
+                delegate: Row {
                     width: parent.width
-                    text: model.ui_nutrDesc + " " + model.ui_nutrVal + model.ui_units + " --- " + diet.getNutrReq(model.ui_nutrNo)
+                    height: vNameLabel.height*2
+                    Label {
+                        id: vNameLabel
+                        text: model.ui_nutrDesc// + " " + model.ui_nutrVal + model.ui_units + " --- " + diet.getNutrReq(model.ui_nutrNo)
+                        width: parent.width / 2
+                        horizontalAlignment: Text.AlignHCenter
+                    }
+                    ProgressBar {
+                        value: model.ui_nutrVal / diet.getNutrReq(model.ui_nutrNo)
+                        width: parent.width / 2
+                    }
                 }
 
                 model: []
@@ -149,9 +158,19 @@ Item {
                 Layout.fillWidth: true
                 Layout.fillHeight: true
                 Layout.alignment: Qt.AlignTop
-                delegate: ItemDelegate {
+                delegate: Row {
                     width: parent.width
-                    text: model.ui_nutrDesc + " " + model.ui_nutrVal + model.ui_units
+                    height: mNameLabel.height*2
+                    Label {
+                        id: mNameLabel
+                        text: model.ui_nutrDesc// + " " + model.ui_nutrVal + model.ui_units + " --- " + diet.getNutrReq(model.ui_nutrNo)
+                        width: parent.width / 2
+                        horizontalAlignment: Text.AlignHCenter
+                    }
+                    ProgressBar {
+                        value: model.ui_nutrVal / diet.getNutrReq(model.ui_nutrNo)
+                        width: parent.width / 2
+                    }
                 }
 
                 model: []
