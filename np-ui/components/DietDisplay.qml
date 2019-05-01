@@ -23,9 +23,10 @@ Item {
             text: diet ? diet.ui_name : ''
             onTextChanged: diet.ui_name = text
         }
-        FoodItemDisplay {
+        DietFoodItemDisplay {
             Layout.fillHeight: true
             Layout.fillWidth: true
+            diet: root.diet
             foodItem: root.diet ? root.diet.foodTotalEq : null
             desc: false
         }

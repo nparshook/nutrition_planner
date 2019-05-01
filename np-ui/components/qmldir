@@ -6,3 +6,4 @@ FoodItemListDisplay 1.0 FoodItemListDisplay.qml
 DietDisplay 1.0 DietDisplay.qml
 DayDisplay 1.0 DayDisplay.qml
 MealDisplay 1.0 MealDisplay.qml
+DietFoodItemDisplay 1.0 DietFoodItemDisplay.qml

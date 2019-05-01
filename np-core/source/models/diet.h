@@ -42,7 +42,7 @@ public:
     Q_INVOKABLE QVariant newDay();
     Q_INVOKABLE void removeDay(Day* day);
     Q_INVOKABLE void remove();
-
+    Q_INVOKABLE float getNutrReq(int nutr_no);
 signals:
     void nameChanged();
     void foodEqChanged();

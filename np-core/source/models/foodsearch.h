@@ -24,6 +24,7 @@ public:
     Q_INVOKABLE QVariant searchFoods(int foodGrpIdx, const QString &searchText);
     Q_INVOKABLE QVariant getFood(FoodID *);
     FoodItem* getFoodByNdb(const QString &ndb_no);
+    QHash<int, float> getNutrReqs(const QString ls_cd);
 
 private:
     class Implementation;

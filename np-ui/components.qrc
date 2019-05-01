@@ -8,5 +8,6 @@
         <file alias="DietDisplay.qml">components/DietDisplay.qml</file>
         <file alias="DayDisplay.qml">components/DayDisplay.qml</file>
         <file alias="MealDisplay.qml">components/MealDisplay.qml</file>
+        <file alias="DietFoodItemDisplay.qml">components/DietFoodItemDisplay.qml</file>
     </qresource>
 </RCC>

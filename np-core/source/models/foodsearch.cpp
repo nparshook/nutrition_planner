@@ -24,6 +24,7 @@ public:
         foodWeightQuery = usdaDB->createPreparedQuery("SELECT seq, amount, msre_desc, gm_wgt FROM weight WHERE ndb_no=:n;");
         foodNutrientsQuery = usdaDB->createPreparedQuery("SELECT nut_data.nutr_no, nut_data.nutr_val, nutr_def.units, nutr_def.tagname, nutr_def.nutrdesc FROM nut_data INNER JOIN nutr_def ON nut_data.nutr_no=nutr_def.nutr_no WHERE ndb_no=:n ORDER BY nutr_def.tagname;");
         foodGroupsQuery = usdaDB->createPreparedQuery("SELECT * FROM fd_group ORDER BY fdgrp_desc");
+        nutrReqsQuery = usdaDB->createPreparedQuery("SELECT * FROM nutr_req WHERE ls_cd = :ls_cd");
     }
 
     void createFoodGrps() {
@@ -110,6 +111,22 @@ public:
         return getFood(id);
     }
 
+    QHash<int, float> getNutrReqs(const QString ls_cd) {
+        QHash<int, float> returnTable;
+        nutrReqsQuery->bindValue(":ls_cd", ls_cd);
+        nutrReqsQuery->exec();
+        while (nutrReqsQuery->next())
+        {
+            int nutr_no = nutrReqsQuery->value("nutr_no").toInt();
+            if(nutrReqsQuery->value("rda").toString() != "") {
+                returnTable[nutr_no] = nutrReqsQuery->value("rda").toFloat();
+            } else {
+                returnTable[nutr_no] = nutrReqsQuery->value("ai").toFloat();
+            }
+        }
+        return returnTable;
+    }
+
     FoodSearch* foodSearch{nullptr};
     DatabaseManager* usdaDB{nullptr};
     QSqlQuery* foodSearchQuery;
@@ -118,6 +135,7 @@ public:
     QSqlQuery* foodWeightQuery;
     QSqlQuery* foodNutrientsQuery;
     QSqlQuery* foodGroupsQuery;
+    QSqlQuery* nutrReqsQuery;
     QList<FoodGrp *>foodGrps;
 };
 
@@ -147,6 +165,10 @@ QVariant FoodSearch::getFood(FoodID *foodID)
 FoodItem* FoodSearch::getFoodByNdb(const QString &ndb_no)
 {
     return implementation->getFoodByNdb(ndb_no);
+}
+
+QHash<int, float> FoodSearch::getNutrReqs(const QString ls_cd) {
+    return implementation->getNutrReqs(ls_cd);
 }
 }
 }

@@ -32,26 +32,31 @@ public:
 
     void init() {
         if(!manager->hasTable("diets")) {
-            QSqlQuery *createDiets = manager->createPreparedQuery("CREATE TABLE diets (id INTEGER PRIMARY KEY AUTOINCREMENT, name TEXT)");
+            QSqlQuery *createDiets = manager->createPreparedQuery("CREATE TABLE diets (id INTEGER PRIMARY KEY AUTOINCREMENT, name TEXT, ls_cd TEXT)");
             createDiets->exec();
         }
     }
 
     void load() {
-        QSqlQuery *getDietQuery = manager->createPreparedQuery("SELECT name FROM diets WHERE id=(:id)");
+        QSqlQuery *getDietQuery = manager->createPreparedQuery("SELECT name, ls_cd FROM diets WHERE id=(:id)");
         getDietQuery->bindValue(":id", key);
         getDietQuery->exec();
         getDietQuery->next();
 
         name = getDietQuery->value("name").toString();
+        ls_cd = getDietQuery->value("ls_cd").toString();
+        nutrReqsTable = searcher->getNutrReqs(ls_cd);
     }
 
     void create() {
         init();
-        QSqlQuery *createDietQuery = manager->createPreparedQuery("INSERT INTO diets (name) VALUES (:name)");
+        QSqlQuery *createDietQuery = manager->createPreparedQuery("INSERT INTO diets (name, ls_cd) VALUES (:name, :ls_cd)");
         createDietQuery->bindValue(":name", name);
+        createDietQuery->bindValue(":ls_cd", ls_cd);
         createDietQuery->exec();
+
         key = createDietQuery->lastInsertId().toInt();
+        nutrReqsTable = searcher->getNutrReqs(ls_cd);
     }
 
     void save() {
@@ -115,10 +120,12 @@ public:
                 FoodNutr *nutr = nutrs[j];
                 if(!nutrsTable.contains(nutr->nutrNo()))
                 {
-                   nutrsTable[nutr->nutrNo()] = new FoodNutr(nutr->nutrNo(),
-                                                             nutr->nutrVal() * scaleFactor * amount / 100, nutr->nutrDesc(),
-                                                             nutr->tagName(),
-                                                             nutr->units());
+                    if(nutrReqsTable.contains(nutr->nutrNo())){
+                        nutrsTable[nutr->nutrNo()] = new FoodNutr(nutr->nutrNo(),
+                                                                 nutr->nutrVal() * scaleFactor * amount / 100, nutr->nutrDesc(),
+                                                                 nutr->tagName(),
+                                                                 nutr->units());
+                    }
                 } else {
                     nutrsTable[nutr->nutrNo()]->setNutrVal(nutr->nutrVal() * scaleFactor * amount / 100 + nutrsTable[nutr->nutrNo()]->nutrVal());
                 }
@@ -161,16 +168,25 @@ public:
         delDietQuery->exec();
     }
 
+    float getNutrReq(int nutr_no) {
+        if(nutrReqsTable.contains(nutr_no)) {
+            return nutrReqsTable[nutr_no];
+        }
+        return -1.0;
+    }
+
     Diet* diet{nullptr};
     DatabaseManager* manager{nullptr};
     FoodSearch* searcher{nullptr};
     QString name;
+    QString ls_cd = "2";
     int key;
     FoodItem* foodTotalEq{nullptr};
     FoodItem* foodAvgEq{nullptr};
     FoodID *foodID{nullptr};
     QList<Day*> dayList{nullptr};
     bool daysLoaded = false;
+    QHash<int, float> nutrReqsTable;
 };
 
 Diet::Diet(QObject *parent)
@@ -250,5 +266,9 @@ void Diet::removeDay(Day *day)
 
 void Diet::remove() {
     implementation->remove();
+}
+
+float Diet::getNutrReq(int nutr_no) {
+    return implementation->getNutrReq(nutr_no);
 }
 }}
