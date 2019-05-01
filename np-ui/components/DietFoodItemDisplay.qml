@@ -97,7 +97,7 @@ Item {
             horizontalAlignment: Text.AlignHCenter
             wrapMode: Text.WordWrap
             font.pointSize: 28
-            text: if(foodItem) {'Calories ' + root.calories()} else {''}
+            text: if(foodItem) {'Calories ' + Math.round(root.calories())} else {''}
         }
         Label {
             id: protein
@@ -106,7 +106,7 @@ Item {
             horizontalAlignment: Text.AlignHCenter
             wrapMode: Text.WordWrap
             font.pointSize: 28
-            text: if(foodItem && foodItem.ui_protein) {foodItem.ui_protein.ui_nutrDesc + ' ' + root.scaleNutr(foodItem.ui_protein.ui_nutrVal)} else {''}
+            text: if(foodItem && foodItem.ui_protein) {foodItem.ui_protein.ui_nutrDesc + ' ' + Math.round(root.scaleNutr(foodItem.ui_protein.ui_nutrVal))} else {''}
         }
         Label {
             id: carbs
@@ -115,7 +115,7 @@ Item {
             horizontalAlignment: Text.AlignHCenter
             wrapMode: Text.WordWrap
             font.pointSize: 28
-            text: if(foodItem && foodItem.ui_carbs) {foodItem.ui_carbs.ui_nutrDesc + ' ' + root.scaleNutr(foodItem.ui_carbs.ui_nutrVal)} else {''}
+            text: if(foodItem && foodItem.ui_carbs) {foodItem.ui_carbs.ui_nutrDesc + ' ' + Math.round(root.scaleNutr(foodItem.ui_carbs.ui_nutrVal))} else {''}
         }
         Label {
             id: fat
@@ -124,7 +124,7 @@ Item {
             horizontalAlignment: Text.AlignHCenter
             wrapMode: Text.WordWrap
             font.pointSize: 28
-            text: if(foodItem && foodItem.ui_fat) {foodItem.ui_fat.ui_nutrDesc + ' ' + root.scaleNutr(foodItem.ui_fat.ui_nutrVal)} else {''}
+            text: if(foodItem && foodItem.ui_fat) {foodItem.ui_fat.ui_nutrDesc + ' ' + Math.round(root.scaleNutr(foodItem.ui_fat.ui_nutrVal))} else {''}
         }
         RowLayout {
             ListView {
@@ -137,7 +137,7 @@ Item {
                     height: vNameLabel.height*2
                     Label {
                         id: vNameLabel
-                        text: model.ui_nutrDesc// + " " + model.ui_nutrVal + model.ui_units + " --- " + diet.getNutrReq(model.ui_nutrNo)
+                        text: model.ui_nutrDesc + " (" + Math.round(model.ui_nutrVal / diet.getNutrReq(model.ui_nutrNo)*100) + "%)"
                         width: parent.width / 2
                         horizontalAlignment: Text.AlignHCenter
                     }
@@ -163,7 +163,7 @@ Item {
                     height: mNameLabel.height*2
                     Label {
                         id: mNameLabel
-                        text: model.ui_nutrDesc// + " " + model.ui_nutrVal + model.ui_units + " --- " + diet.getNutrReq(model.ui_nutrNo)
+                        text: model.ui_nutrDesc + " (" + Math.round(model.ui_nutrVal / diet.getNutrReq(model.ui_nutrNo)*100) + "%)"
                         width: parent.width / 2
                         horizontalAlignment: Text.AlignHCenter
                     }
